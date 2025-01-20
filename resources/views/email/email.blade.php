@@ -360,21 +360,12 @@
 
                         <div style="gap: 2px">
                             <p style="font-size: 16px"><b>Reference Number:</b> {{ $data['reference_number'] }} </p>
-<<<<<<< HEAD
                             <p><b>Billing From:</b> {{ $data['startEndDate']['start'] }} </p>
                             <p><b>Billing To:</b> {{ $data['startEndDate']['end'] }} </p>
                             <p style="font-family: 'DejaVu Sans', sans-serif;">
                                 <b>Amount:</b>₱ {{ $data['amount'] }}.00
                             </p>
                             <p><b>5% Discount Due Date:</b> {{ $data['dueDate'] }} </p>
-=======
-                            <p><b>Cut off From:</b> {{ $data['startEndDate']['start'] }} </p>
-                            <p><b>Cut off To:</b> {{ $data['startEndDate']['end'] }} </p>
-                            <p style="font-family: 'DejaVu Sans', sans-serif;">
-                                <b>Amount:</b>₱ {{ $data['amount'] }}.00
-                            </p>
-                            <p><b>Due Date:</b> {{ $data['dueDate'] }} </p>
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                         </div>
 
                         <p style='margin-top: 5px; margin-bottom: 5px'>

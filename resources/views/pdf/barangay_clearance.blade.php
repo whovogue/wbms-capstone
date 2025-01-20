@@ -67,11 +67,7 @@
         </div>
 
         <div style="margin-top: 11px;">
-<<<<<<< HEAD
             <span>CERT. NO.: <strong>{{ $cert_no }}</strong></span>
-=======
-            <span>CERT. NO.: <strong>{{ $certificate_number }}</strong></span>
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         </div>
 
         <div style="margin-top: 11px;">

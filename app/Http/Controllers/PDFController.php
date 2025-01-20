@@ -46,12 +46,8 @@ class PDFController extends Controller
             'gender' => $request->gender,
             'age' => $request->age,
             'address' => $request->address,
-<<<<<<< HEAD
             // 'certificate_number' => $request->certificate_number,
             'cert_no' => $request->cert_no,
-=======
-            'certificate_number' => $request->certificate_number,
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
             'purpose' => $request->purpose,
             'imagePath' => storage_path('app/images/clearance.png'),
         ];
