@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Session;
+
+class Check2FA
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next)
+    {
+
+        if (! Session::has('user_2fa')) {
+            if (! Auth::check()) {
+
+                return $next($request);
+            } else {
+                return redirect()->route('2fa.index');
+            }
+        }
+
+        return $next($request);
+    }
+}
