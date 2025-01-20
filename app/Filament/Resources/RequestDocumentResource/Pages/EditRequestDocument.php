@@ -85,12 +85,8 @@ class EditRequestDocument extends EditRecord
                 'gender' => ucfirst($data['custom_fields']['gender']),
                 'age' => ceil(Carbon::parse($data['custom_fields']['date_of_birth'])->diffInYears(Carbon::now())),
                 'address' => $data['custom_fields']['address'],
-<<<<<<< HEAD
                 // 'certificate_number' => $this->generateCertificateNumber(),
                 'cert_no' => $data['custom_fields']['cert_no'],
-=======
-                'certificate_number' => $this->generateCertificateNumber(),
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                 'purpose' => $data['custom_fields']['purpose'],
                 'date_of_issue' => Carbon::now()->format('d-m-Y'),
             ];
@@ -126,8 +122,5 @@ class EditRequestDocument extends EditRecord
 
         return $certificateNumber;
     }
-<<<<<<< HEAD
     //Naa ra diay diri ang certificate number
-=======
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
 }
