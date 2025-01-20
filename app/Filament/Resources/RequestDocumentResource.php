@@ -109,26 +109,16 @@ class RequestDocumentResource extends Resource
                                 ->label('Gender')
                                 ->default(auth()->user()->gender)
                                 ->options([
-<<<<<<< HEAD
                                     'Male' => 'Male',
                                     'Female' => 'Female',
                                     'Prefer not to say' => 'Prefer not to say',
-=======
-                                    'male' => 'Male',
-                                    'female' => 'Female',
-                                    'prefer' => 'Prefer not to say',
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                                 ])
                                 ->required(),
 
                             TextInput::make('custom_fields.blood_type')
                                 ->label('Blood Type')
                                 ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
-<<<<<<< HEAD
                                 ->required(false),
-=======
-                                ->required(),
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
 
                             TextInput::make('custom_fields.weight')
                                 ->label('Weight')
@@ -146,7 +136,6 @@ class RequestDocumentResource extends Resource
                                 ->label('Date Of Birth')
                                 ->default(auth()->user()->date_of_birth)
                                 ->required(),
-<<<<<<< HEAD
                                 // NEW ADDED CERT NO.
                                 TextInput::make('custom_fields.cert_no')
                                 ->label('CERT No. (Leave Blank if not applicable)')
@@ -155,10 +144,6 @@ class RequestDocumentResource extends Resource
                                 // NEW ADDED CERT NO.
                             TextInput::make('custom_fields.address')
                                 ->label('Address (Purok, Barangay, City/Municipality)')
-=======
-                            TextInput::make('custom_fields.address')
-                                ->label('Address')
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                                 ->default(auth()->user()->address)
                                 ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
                                 ->required(),
@@ -178,11 +163,7 @@ class RequestDocumentResource extends Resource
                                 ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
                                 ->required(),
                             TextInput::make('custom_fields.emergency_address')
-<<<<<<< HEAD
                                 ->label('Address (Purok, Barangay, City/Municipality)')
-=======
-                                ->label('Address')
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                                 ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
                                 ->required(),
                             TextInput::make('custom_fields.emergency_contact_number')
@@ -268,26 +249,16 @@ class RequestDocumentResource extends Resource
                     Select::make('custom_fields.gender')
                         ->label('Gender')
                         ->options([
-<<<<<<< HEAD
                             'Male' => 'Male',
                             'Female' => 'Female',
                             'Prefer not to say' => 'Prefer not to say',
-=======
-                            'male' => 'Male',
-                            'female' => 'Female',
-                            'prefer' => 'Prefer not to say',
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                         ])
                         ->required(),
 
                     TextInput::make('custom_fields.blood_type')
                         ->label('Blood Type')
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
-<<<<<<< HEAD
                         ->required(false),
-=======
-                        ->required(),
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
 
                     TextInput::make('custom_fields.weight')
                         ->label('Weight')
@@ -304,7 +275,6 @@ class RequestDocumentResource extends Resource
                     DatePicker::make('custom_fields.date_of_birth')
                         ->label('Date Of Birth')
                         ->required(),
-<<<<<<< HEAD
                     // NEW ADDED CERT NO.
                     TextInput::make('custom_fields.cert_no')
                     ->label('CERT No. (Leave Blank if not applicable)')
@@ -313,10 +283,6 @@ class RequestDocumentResource extends Resource
                     // NEW ADDED CERT NO.  
                     TextInput::make('custom_fields.address')
                         ->label('Address (Purok, Barangay, City/Municipality)')
-=======
-                    TextInput::make('custom_fields.address')
-                        ->label('Address')
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
                         ->required(),
                     TextInput::make('custom_fields.purpose')
@@ -335,11 +301,7 @@ class RequestDocumentResource extends Resource
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
                         ->required(),
                     TextInput::make('custom_fields.emergency_address')
-<<<<<<< HEAD
                         ->label('Address (Purok, Barangay, City/Municipality)')
-=======
-                        ->label('Address')
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
                         ->required(),
                     TextInput::make('custom_fields.emergency_contact_number')
@@ -381,11 +343,7 @@ class RequestDocumentResource extends Resource
     {
         return $table
             ->columns([
-<<<<<<< HEAD
                 TextColumn::make('user.name')->label('Generated/Requested by')
-=======
-                TextColumn::make('user.name')->label('Person to be notified')
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                     ->searchable()
                     ->visible(auth()->user()->isAdmin()),
                 TextColumn::make('type')->label('Type')->formatStateUsing(fn (string $state): string => match ($state) {
