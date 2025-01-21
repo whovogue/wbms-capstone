@@ -34,7 +34,7 @@ class SocialiteController extends Controller
                 $provider.'_id' => $response->getId(),
                 'name' => $response->getName(),
                 'email' => $response->getEmail(),
-                'role' => 'consumer',
+                'role' => 'consumers',
                 'password' => 'password',
             ]);
         }
