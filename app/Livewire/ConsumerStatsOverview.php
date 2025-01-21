@@ -47,12 +47,13 @@ class ConsumerStatsOverview extends BaseWidget
 
                 $previousConsumption = $readingQuery
                         ->where('water_connection_id', $firstConnection->id)
-                        ->sum('previous_reading');
+                        ->latest('created_at')
+                        ->first()?->previous_reading ?? 0;
 
                 $presentConsumption = $readingQuery
                         ->where('water_connection_id', $firstConnection->id)
-                        ->latest('created_at')  // Fetch the latest reading based on the created_at timestamp
-                        ->first()?->present_reading ?? 0;  // Get the present_reading value or default to 0 if no readings exist
+                        ->latest('created_at')
+                        ->first()?->present_reading ?? 0;
 
 
                 $billPayable = $billQuery
