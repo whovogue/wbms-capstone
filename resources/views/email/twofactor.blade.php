@@ -355,11 +355,7 @@
 
                         <h3 style="font-size: 15px">Here's the OTP code <b> {{ $details['code'] }} </b> </h3>
 
-<<<<<<< HEAD
                         <h3 style="font-size: 15px">To proceed with your login, input the provided OTP
-=======
-                        <h3 style="font-size: 15px">To proceed with the process, input the provided OTP
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
                             code.</b>
                         </h3>
 

@@ -38,64 +38,38 @@
 
     <div style="z-index: 100">
         <div
-<<<<<<< HEAD
                 {{-- EDIT SA margin top from 185px--}}
 
             style="z-index: 100; margin-top: 210px; margin-left: 236px; position: absolute; transform: translateX(-50%);">
-=======
-            style="z-index: 100; margin-top: 185px; margin-left: 236px; position: absolute; transform: translateX(-50%);">
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
             <span style="border-bottom: 1px solid black; padding-bottom: 2px; font-weight: bold; font-size: 16px;">
                 {{ $name }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from 224px --}}
         <div style="z-index: 100; margin-top: 236px; margin-left: 282px;">
-=======
-
-        <div style="z-index: 100; margin-top: 224px; margin-left: 282px;">
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
             <span style="border-bottom: 1px solid black; padding-bottom: -1px;font-size: 11px;">
                 {{ $purok }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -106.5px --}}
         <div style="z-index: 100; margin-top: -118.5px;margin-left: 503px;">
-=======
-
-        <div style="z-index: 100; margin-top: -106.5px;margin-left: 503px;">
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
             <span style="font-size: 12px">
                 {{ $date_of_birth }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -6px + 12 --}}
-=======
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         <div style="z-index: 100; margin-top: -6px; margin-left: 453px;">
             <span style="font-size: 12px;">
                 {{ $age }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -6px --}}
-=======
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         <div style="z-index: 100; margin-top: -6px; margin-left: 462px;">
             <span style="font-size: 12px;">
                 :{{ ucfirst($civil_status) }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -5px --}}
-=======
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         <div style="z-index: 100; margin-top: -5px; margin-left: 492px;">
             <span style="font-size: 12px;">
                 {{ ucfirst($citizenship) }}
@@ -105,47 +79,30 @@
                 {{ ucfirst($height) }} cm
             </span> --}}
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from 24px --}}
-=======
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         <div style="margin-top: 24px; margin-left: 466px">
             <span style="font-size: 12px;">
                 {{ $emergency_name }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -6px --}}
-=======
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         <div style="margin-top: -6px; margin-left: 504px">
             <span style="font-size: 12px;">
                 {{ $emergency_relation }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -6px --}}
-=======
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         <div style="margin-top: -6px; margin-left: 480px">
             <span style="font-size: 12px;">
                 {{ $emergency_address }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -5px --}}
-=======
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
         <div style="margin-top: -5px; margin-left: 500px">
             <span style="font-size: 12px;">
                 {{ $emergency_contact_number }}
             </span>
         </div>
-<<<<<<< HEAD
                 {{-- edit sa margin top  from -6px --}}
         <div style="margin-top: -6px; margin-left: 495px">
             <span style="font-size: 12px;">
@@ -154,16 +111,6 @@
         </div>
     </div>
                 {{-- edit sa margin top  from 10px --}}
-=======
-
-        <div style="margin-top: -6px; margin-left: 495px">
-            <span style="font-size: 12px;">
-                December 31 {{ now()->format('Y') }}
-            </span>
-        </div>
-    </div>
-
->>>>>>> ecc6800919e4cc485cb711403da1aaf9ed85b67a
     <div style="z-index: 100">
         <span style="font-size: 15px; color: yellow; margin-top: 10px; margin-left: 82px;font-weight: bold;">
             ID NO. {{ $id_no }}
