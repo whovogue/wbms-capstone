@@ -13,7 +13,8 @@
         "hasan-ahani/filament-otp-input": "^1.0",
         "laravel/framework": "^11.9",
         "laravel/socialite": "^5.16",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "livewire-ui/modal": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
