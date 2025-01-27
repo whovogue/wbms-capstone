@@ -14,6 +14,8 @@ use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Filament\Pages\Auth\Register as RegisterPage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Filament\Forms\Components\Checkbox;
+use Illuminate\Support\HtmlString;
 
 class Register extends RegisterPage
 {
@@ -35,6 +37,8 @@ class Register extends RegisterPage
                         $this->getPurokFormComponent(),
                         $this->getContactNumberFormComponent(),
                         $this->getCivilStatusFormComponent(),
+                        $this->getAgreeToTerms(),
+                        
                     ])
                     ->statePath('data'),
             ),
@@ -108,7 +112,7 @@ class Register extends RegisterPage
             ->options([
                 'male' => 'Male',
                 'female' => 'Female',
-                'prefer' => 'Prefer not to say',
+                'prefer not to say' => 'Prefer not to say',
             ])
             ->required();
     }
@@ -154,14 +158,50 @@ class Register extends RegisterPage
             ])
             ->required();
     }
-
+    // protected function getAgreeToTerms(): Component
+    // {
+    //     return Checkbox::make('terms_agreement')
+    //         ->label(new HtmlString('<span>I agree to the <button type="button" class="text-primary underline">Terms & Conditions</button></span>'))
+    //         ->required()
+    //         ->rules(['accepted'])
+    //         ->validationAttribute('terms and agreement')
+    //         ->default(true)
+    //         ->hidden();
+    // }
+    protected function getAgreeToTerms(): Component
+    {
+        return Checkbox::make('terms_agreement')
+            ->label(new HtmlString('
+                <span>
+                    I agree to the 
+                    <button 
+                        type="button" 
+                        class="text-primary underline"
+                        x-on:click="$dispatch(\'open-modal\', { id: \'modalTerms\' })"
+                    >
+                        Terms & Conditions
+                    </button>
+                </span>
+            '))
+            ->required()
+            ->rules(['accepted'])
+            ->validationAttribute('terms and agreement')
+            ->default(false);
+            // ->hidden();
+    }
+    
+    
+    
+    // Changed
     protected function mutateFormDataBeforeRegister(array $data): array
     {
         $data['role'] = 'consumers';
         $data['consumer_number'] = $this->generateConsumerNumber();
-
+        $data['terms_agreement'] = $data['terms_agreement'] ?? false;
+    
         return $data;
     }
+    
 
     public function generateConsumerNumber(): string
     {
@@ -214,4 +254,5 @@ class Register extends RegisterPage
 
         return app(RegistrationResponse::class);
     }
+
 }

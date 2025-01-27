@@ -386,7 +386,7 @@ class Dashboard extends Page implements HasForms, HasTable
     {
         do {
             // Generate a random 10-digit number
-            $referenceId = 'WBS'.random_int(1000000, 9999999); // Adjust the range as needed
+            $referenceId = 'WBMS'.random_int(1000000, 9999999); // Adjust the range as needed
         } while (DB::table('water_connections')->where('reference_id', $referenceId)->exists());
 
         return $referenceId;

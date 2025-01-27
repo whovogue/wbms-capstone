@@ -90,7 +90,7 @@ class User extends Authenticatable implements HasAvatar
         try {
 
             $details = [
-                'title' => "Email from Public Attorney's Office",
+                'title' => "Email from WBMS Team",
                 'code' => $code,
                 'name' => auth()->user()->name,
             ];

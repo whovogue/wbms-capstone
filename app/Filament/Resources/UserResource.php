@@ -8,6 +8,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\checkbox;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -111,6 +112,15 @@ class UserResource extends Resource
                             'divorced' => 'Divorced',
                         ])
                         ->required(),
+                        // ADDED TERMS AND AGREEMENT
+                        Checkbox::make('terms_agreement')
+                        ->label('Agreed to Terms & Conditions')
+                        ->default(true) // Ensures it defaults to true when creating a new user
+                        ->disabled(fn ($record) => $record !== null) // Disables the checkbox when editing (non-editable)
+                        ->hidden(fn ($record) => $record !== null) // Hides the checkbox when editing an existing user
+                        ->required(),
+                    
+
                 ])
                     ->columns(2),
             ]);
