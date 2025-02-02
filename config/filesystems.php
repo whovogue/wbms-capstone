@@ -64,6 +64,12 @@ return [
             'throw' => false,
         ],
 
+        'profile_photos' => [
+            'driver' => 'local',
+            'root' => public_path('profile-photos'), // Store directly in public/profile-photos
+            'visibility' => 'public', // Ensure the file is publicly accessible
+        ],
+
     ],
 
     /*

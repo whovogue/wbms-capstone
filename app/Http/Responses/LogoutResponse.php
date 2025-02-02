@@ -13,6 +13,6 @@ class LogoutResponse implements Responsable
         Session::flush();
 
         // change this to your desired route
-        return redirect('/');
+        return redirect('/app/login');
     }
 }

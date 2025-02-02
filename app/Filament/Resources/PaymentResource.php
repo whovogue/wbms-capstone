@@ -100,11 +100,11 @@ class PaymentResource extends Resource
                     ->modalWidth('full'),
 
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
+            // ->bulkActions([
+            //     Tables\Actions\BulkActionGroup::make([
+            //          Tables\Actions\DeleteBulkAction::make(),
+            //     ]),
+            // ])
             ->groups([
                 Tables\Grouping\Group::make('bill.waterConnection.name')
                     ->label('Owner Name')

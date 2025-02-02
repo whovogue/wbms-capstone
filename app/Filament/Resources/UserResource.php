@@ -147,6 +147,11 @@ class UserResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->groups([
+                Tables\Grouping\Group::make('role')
+                    ->label('User Role')
+                    ->collapsible(),
+            ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
                 //     Tables\Actions\DeleteBulkAction::make(),

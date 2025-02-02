@@ -11,6 +11,7 @@
         "filament/notifications": "^3.2",
         "filament/widgets": "^3.2",
         "hasan-ahani/filament-otp-input": "^1.0",
+        "joaopaulolndev/filament-edit-profile": "^1.0",
         "laravel/framework": "^11.9",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
