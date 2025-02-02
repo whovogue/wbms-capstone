@@ -13,12 +13,22 @@ class InstallationOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $totalAmount = $this->getPageTableQuery()->sum('amount');
-
+        $query = $this->getPageTableQuery();
+    
+        // Total amount
+        $totalAmount = $query->sum('amount');
+    
+        // Get the last 7 amounts for the chart
+        $chartData = $query->latest('created_at')->limit(7)->pluck('amount')->toArray();
+    
         return [
-            Stat::make('Total Amount', $totalAmount),
+            Stat::make('Total Amount', '₱' . number_format($totalAmount, 2))
+                ->description('Total revenue from installations')
+                ->color('success')
+                ->chart($chartData),
         ];
     }
+    
 
     protected function getTablePage(): string
     {

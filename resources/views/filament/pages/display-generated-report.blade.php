@@ -105,7 +105,8 @@
         </table>
 
         <div class="date1" style="margin-top: 25px;">
-            <div class="signature-label">Prepared by : {{ auth()->user()->name }}</div>
+            <div class="signature-label">Prepared by :<u> {{ auth()->user()->name }}</u></div>
+            <div class="signature-label">                    Book-Keeper</div>
         </div>
 
     </div>

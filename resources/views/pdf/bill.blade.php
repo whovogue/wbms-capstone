@@ -104,11 +104,13 @@
                 <td class="label">Consumer Number:</td>
                 <td class="label" colspan="2" style="text-align: right;">
                     {{ auth()->user()->isAdmin() ? '' : $consumer_number }}</td>
-                <td class="label" colspan="2">Previous Balance:</td>
+                {{-- <td class="label" colspan="2">Previous Balance:</td> --}}
+                <td class="label" colspan="2">Remaining Balance:</td>
                 <td></td>
                 <td
                     style="text-align: right;font-weight: bold; font-family: 'DejaVu Sans', sans-serif; font-size: 13px;">
-                    ₱ {{ $previous_balance }}.00</td>
+                    {{-- ₱ {{ $previous_balance }}.00</td> --}}
+                    ₱ {{ $previous_bal_display }}.00</td>
             </tr>
 
             <tr>
@@ -131,7 +133,7 @@
 
             <tr>
                 <td class="label">Address:</td>
-                <td colspan="2" style="text-align: right;">PRK 1-A</td>
+                <td colspan="2" style="text-align: right;">{{ $purok }}</td>
                 <td>Excess in minimum</td>
                 <td width="20px" style="text-align: right;">{{ $excess_key }}</td>
                 <td style="text-align: right;font-family: 'DejaVu Sans', sans-serif;font-size: 13px;">
@@ -164,15 +166,15 @@
 
             <tr>
                 <td class="label" colspan="2">No. of Days</td>
-                <td></td>
+                <td>{{ $num_of_days }} Days</td>
                 <td>Maintenance Charge</td>
                 <td width="20px" style="text-align: right;">20</td>
                 <td style="text-align: right;font-family: 'DejaVu Sans', sans-serif;font-size: 13px;">₱ 20.00</td>
                 <td></td>
             </tr>
             <tr>
-                <td class="label" colspan="2">Ave cm3/day</td>
-                <td></td>
+                <td class="label" colspan="2">Ave cm³/day</td> {{-- Ave cm3/day --}}
+                <td>{{ $ave_cm }} cm³</td>
                 <td>5% Discount</td>
                 <td></td>
                 <td style="text-align: center;">{{ $is_discounted }}</td>

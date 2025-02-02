@@ -15,11 +15,23 @@ class TotalAmountAndTotalCubicMeter extends BaseWidget
     {
 
         $totalConsumption = $this->getPageTableQuery()->with(['bill.reading'])->get()->sum('bill.reading.total_consumption');
-        $totalAmount = $this->getPageTableQuery()->sum('amount');
+        // $totalAmount = $this->getPageTableQuery()->sum('amount');
+        $totalAmount = $this->getPageTableQuery()->sum('partial_payment');
+        $totalAmountrecievable = $this->getPageTableQuery()->sum('amount');
+
 
         return [
-            Stat::make('Total Water Consumption', $totalConsumption),
-            Stat::make('Total Amount', '₱'.$totalAmount),
+            Stat::make('Total Water Consumption', $totalConsumption . ' m³')
+                ->description('Total Water Consumptions of all Water connections')
+                ->color('success'),
+
+            Stat::make('Received Payments', '₱' . number_format($totalAmount, 2))
+                ->description('Total Amount Received by WBMS')
+                ->color('success'),
+
+            Stat::make('Total Amount', '₱' . number_format($totalAmountrecievable, 2))
+                ->description('Total Expected Receivable Amount')
+                ->color('success'),
         ];
     }
 

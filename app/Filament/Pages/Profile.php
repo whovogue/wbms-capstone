@@ -17,6 +17,7 @@ use Illuminate\Validation\Rules\Password;
 
 class Profile extends Page implements HasForms
 {
+
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
     protected static string $view = 'filament.pages.profile';
@@ -25,11 +26,20 @@ class Profile extends Page implements HasForms
 
     protected static ?int $navigationSort = 11;
 
+    // protected static ?bool $navigation = false;
+
     public ?array $data = [];
 
     public ?array $profileData = [];
 
     public $user;
+
+    // PARA RA NI MATAGO ANG PROFILE SETTINGS HEHE
+
+    public static function canAccess(): bool
+    {
+        return false;
+    }
 
     public function mount()
     {
@@ -155,7 +165,6 @@ class Profile extends Page implements HasForms
             ])
             ->statePath('data');
     }
-
     public function submit()
     {
         $data = array_merge($this->getProfileDataFormSchema->getState(), $this->getProfilePhotoFormSchema->getState());

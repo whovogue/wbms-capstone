@@ -17,7 +17,7 @@ class InstallationResource extends Resource
 {
     protected static ?string $model = Installation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench';
 
     protected static ?string $navigationGroup = 'Histories';
 
@@ -48,14 +48,30 @@ class InstallationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('waterConnection.reference_id')->weight(FontWeight::Bold)->searchable(),
-                TextColumn::make('type')->formatStateUsing(fn (string $state): string => ucfirst($state)),
-                TextColumn::make('amount')->money('PHP')->weight(FontWeight::Bold)->toggleable(),
+                TextColumn::make('waterConnection.reference_id')->weight(FontWeight::Bold),
+                TextColumn::make('waterConnection.name')->label('Consumer Name'),
+                TextColumn::make('type')
+                ->label('Installation Status') // Custom label
+                ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                ->badge() // Turns it into a pill
+                ->color(fn (string $state): string => match ($state) {
+                    'pending' => 'warning',
+                    'active' => 'success',
+                    'disconnected' => 'danger',
+                    default => 'gray',
+                }),            
+                // TextColumn::make('waterConnection.amount')->money('PHP')->weight(FontWeight::Bold)->toggleable(),
+                TextColumn::make('waterConnection.amount')->money('PHP')->weight(FontWeight::Bold),
                 TextColumn::make('created_at')->label('Payment Date')->date('F d, Y h:i A')->timezone('Asia/Manila'),
             ])
             ->filters([
-                //
+
+                
+
             ])
+            // ->sortable()
+            // ->searchable()
+            // ->searchPlaceholder('Search Name...')
             ->actions([
                 // Tables\Actions\EditAction::make(),
             ])

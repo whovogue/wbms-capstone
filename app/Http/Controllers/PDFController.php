@@ -94,11 +94,20 @@ class PDFController extends Controller
 
         $total = $bills ? $bill->billing_amount + $partialValue : $bill->billing_amount;
 
+        // $prev_bal_display = $bill->billing_amount - $bill->partial_payment;
+        $prev_bal_display = ($bill->partial_payment == 0) ? 0 : ($bill->billing_amount - $bill->partial_payment);
+
+        $num_of_days = Carbon::parse($period['start'])->diffInDays(Carbon::parse($period['end'])) + 1;
+
+        $ave_cm = $num_of_days > 0 ? $bill->reading->total_consumption / $num_of_days : 0;
+
+
         $data = [
             'account_number' => $billData->waterConnection->reference_id,
             'consumer_name' => auth()->user()->isAdmin() ? $billData->waterConnection->name : $auth->name,
             'consumer_number' => $auth->consumer_number,
-            'purok' => $auth->purok,
+            // 'purok' => $auth->purok,
+            'purok' => auth()->user()->isAdmin() ? $billData->waterConnection->purok : $auth->purok,
             'bill_date' => $billData->created_at->format('F j, Y'),
             'excess_key' => $excess['excess'],
             'excess_charge' => $excess['excessCharge'],
@@ -115,6 +124,9 @@ class PDFController extends Controller
             'is_discounted' => $billData->is_discounted ? 'YES' : '-',
             'minimumConsumption' => $bill->minimumConsumption,
             'minimumValue' => $bill->minimum,
+            'previous_bal_display' => $prev_bal_display,
+            'num_of_days' => $num_of_days,
+            'ave_cm' => number_format($ave_cm, 2),
         ];
 
         $pdf = \PDF::loadView('pdf.bill', $data);

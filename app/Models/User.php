@@ -76,6 +76,16 @@ class User extends Authenticatable implements HasAvatar
             : $this->profile_photo_url;
     }
 
+//     public function getFilamentAvatarUrl(): ?string
+// {
+//     // Ensure that the image path does not have the 'avatar/' prefix
+//     return file_exists(public_path('profile-photos/' . $this->profile_photo_path))
+//         ? asset('profile-photos/' . $this->profile_photo_path) // Ensure it's pointing to 'profile-photos'
+//         : asset('images/default-avatar.png'); // Fallback to a default image if not available
+// }
+
+
+
     // asset('storage/'.$this->profile_photo_path)
 
     public function generateCode()

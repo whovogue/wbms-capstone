@@ -20,6 +20,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
+use Filament\Navigation\MenuItem;
+use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -64,6 +67,26 @@ class AppPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->label(fn() => auth()->user()->name)
+                    ->url(fn (): string => EditProfilePage::getUrl())
+                    ->icon('heroicon-m-user-circle'),
+
+            ])
+            ->plugins([
+                FilamentEditProfilePlugin::make()
+                ->setTitle('Profile')
+                ->shouldRegisterNavigation(false)
+                ->shouldShowDeleteAccountForm(false)
+                ->setIcon('heroicon-o-user-circle')
+                ->shouldShowAvatarForm()
+                ->setNavigationGroup('Settings')
+                ->customProfileComponents([
+                    \App\Livewire\CustomProfileComponent::class,
+                ]),
+                
             ])
             ->renderHook(
                 'panels::auth.login.form.after',
