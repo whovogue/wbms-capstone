@@ -44,7 +44,9 @@ class AnnouncementResource extends Resource
                         TextInput::make('title')
                             ->required(),
                         Textarea::make('description')
-                            ->required(),
+                            ->required()
+                            ->rows(10),  // Set the number of visible rows (height)
+                            // ->cols(50),
                     ]),
             ]);
     }

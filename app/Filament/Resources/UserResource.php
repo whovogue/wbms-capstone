@@ -32,6 +32,17 @@ class UserResource extends Resource
         return auth()->user()->isAdmin();
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::count();
+        return $count > 0 ? (string) $count : null;
+    }
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
+    }
+    protected static ?string $navigationBadgeTooltip = 'Number of Users';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -95,9 +106,9 @@ class UserResource extends Resource
                     Select::make('gender')
                         ->label('Gender')
                         ->options([
-                            'male' => 'Male',
-                            'female' => 'Female',
-                            'prefer' => 'Prefer not to say',
+                            'Male' => 'Male',
+                            'Female' => 'Female',
+                            'Prefer' => 'Prefer not to say',
                         ])
                         ->required(),
                     TextInput::make('contact_number')
@@ -119,8 +130,11 @@ class UserResource extends Resource
                         ->disabled(fn ($record) => $record !== null) // Disables the checkbox when editing (non-editable)
                         ->hidden(fn ($record) => $record !== null) // Hides the checkbox when editing an existing user
                         ->required(),
+                        TextInput::make('profile_photo_path')
+                        ->default('avatars/default_profile.png')
+                        ->dehydrated(fn ($state) => $state ?: 'avatars/default_profile.png') // Ensure it's set if not provided
+                        ->hidden(),
                     
-
                 ])
                     ->columns(2),
             ]);
@@ -145,7 +159,10 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->requiresConfirmation() // This adds a confirmation prompt
+                ->label('Delete') // Optional: Customize the action label if needed
+                ->icon('heroicon-o-trash'), // Optional: Set the icon for the action
             ])
             ->groups([
                 Tables\Grouping\Group::make('role')

@@ -36,6 +36,17 @@ class WaterConnectionResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'reference_id';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::where('status', 'pending')->count();
+        return $count > 0 ? (string) $count : null;
+    }
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+    protected static ?string $navigationBadgeTooltip = 'Number of Pending Connections';
+
     public static function canViewAny(): bool
     {
         return auth()->user()->isAdmin();
@@ -98,7 +109,7 @@ class WaterConnectionResource extends Resource
             ->columns([
                 TextColumn::make('reference_id')->weight(FontWeight::Bold)->searchable()->copyable(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('address'),
+                // Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('purok'),
                 Tables\Columns\TextColumn::make('phone_number'),
                 Tables\Columns\TextColumn::make('connected_date')
@@ -127,6 +138,9 @@ class WaterConnectionResource extends Resource
             ])->groups([
                 Tables\Grouping\Group::make('purok')
                     ->collapsible(),
+                    Tables\Grouping\Group::make('status')
+                    ->collapsible(),
+
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 return $query->latest();

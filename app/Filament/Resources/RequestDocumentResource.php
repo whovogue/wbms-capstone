@@ -30,6 +30,32 @@ class RequestDocumentResource extends Resource
 
     protected static ?string $navigationGroup = 'Management';
 
+    // NAVIGATION BADGE
+
+    public static function getNavigationBadge(): ?string
+    {
+        // Ensure only admins or clerks see the badge
+        if (!(auth()->user()?->isAdmin() || auth()->user()?->isClerk())) {
+            return null;
+}
+
+    
+        // Count the number of pending RequestDocuments
+        $pendingCount = RequestDocument::where('status', 'pending')->count();
+    
+        // Return the count or null if there are no pending requests
+        return $pendingCount > 0 ? (string) $pendingCount : null;
+    }
+    
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+    protected static ?string $navigationBadgeTooltip = 'The number of pending Requests';
+
+    // NAVIGATION BADGE END
+    
     public static function canViewAny(): bool
     {
         return ! auth()->user()->isMeterReader();
