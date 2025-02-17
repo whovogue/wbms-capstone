@@ -52,7 +52,7 @@ class CustomProfileComponent extends Component implements HasForms
             ->schema([
                 Section::make('Profile Information')
                     ->aside()
-                    ->description('Update your Profile information')
+                    ->description('Update your complete account profile information')
                     ->schema([
                             DatePicker::make('date_of_birth')
                                 ->maxDate(now())
@@ -84,9 +84,9 @@ class CustomProfileComponent extends Component implements HasForms
                             Select::make('gender')
                                 ->label('Gender')
                                 ->options([
-                                    'male' => 'Male',
-                                    'female' => 'Female',
-                                    'prefer' => 'Prefer not to say',
+                                    'Male' => 'Male',
+                                    'Female' => 'Female',
+                                    'Prefer not to say' => 'Prefer not to say',
                                 ])
                                 ->required(),
                             TextInput::make('contact_number')

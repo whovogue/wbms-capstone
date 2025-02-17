@@ -27,7 +27,8 @@ class CreateAnnouncement extends CreateRecord
             ->title('New Announcement from '.auth()->user()->name)
             ->body($data['description'])
             ->success()
-            ->sendToDatabase($user);
+            ->sendToDatabase($user)
+            ->broadcast($user);
 
         // unset($data['role']);
         (new EmailService)->handle(User::whereNot('id', auth()->user()->id)->get(), $data, 'announcement');

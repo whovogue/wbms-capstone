@@ -34,6 +34,28 @@ class BillingResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    public static function getNavigationBadge(): ?string
+    {
+        // Only show the badge to admins
+        if (auth()->user() && auth()->user()->isAdmin()) {
+            $pendingCount = Bill::where('status', 'pending')->count();
+            
+            // Return the count of pending bills as the badge
+            return $pendingCount > 0 ? (string) $pendingCount : null;
+        }
+        
+        // If the user is not an admin, return null to hide the badge
+        return null;
+    }
+    
+    protected static ?string $navigationBadgeTooltip = 'The number of Unpaid/Pending Billings';
+    
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+    
+
     public static function canViewAny(): bool
     {
         return auth()->user()->isAdmin() || auth()->user()->isConsumer();

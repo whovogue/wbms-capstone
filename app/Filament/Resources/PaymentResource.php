@@ -27,6 +27,20 @@ class PaymentResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    // public static function getNavigationBadge(): ?string
+    // {
+    //     $pendingCount = Payment::whereHas('bill', function ($query) {
+    //         $query->where('status', 'pending');
+    //     })->count();
+        
+    //     return $pendingCount > 0 ? (string) $pendingCount : null;
+    // }
+    // public static function getNavigationBadgeColor(): ?string
+    // {
+    //     return 'warning';
+    // }
+    // protected static ?string $navigationBadgeTooltip = 'Number of Unpaid/Pending Billings';
+
     public static function canViewAny(): bool
     {
         return auth()->user()->isAdmin();

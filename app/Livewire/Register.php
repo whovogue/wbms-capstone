@@ -110,9 +110,9 @@ class Register extends RegisterPage
         return Select::make('gender')
             ->label('Gender')
             ->options([
-                'male' => 'Male',
-                'female' => 'Female',
-                'prefer not to say' => 'Prefer not to say',
+                'Male' => 'Male',
+                'Female' => 'Female',
+                'Prefer not to say' => 'Prefer not to say',
             ])
             ->required();
     }

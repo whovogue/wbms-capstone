@@ -13,25 +13,37 @@ class StatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-
+        $currentMonth = now()->format('F');
+        $currentYear = now()->year;
+    
         $totalConsumers = User::query()->where('role', 'consumers')->count();
-        // $totalConnections = WaterConnection::query()->where('status', 'active')->count();
-        $revenue = Payment::query()->sum('partial_payment');
-        $totalConsumptions = Reading::query()->sum('total_consumption');
-
+        
+        // Get revenue for the current month
+        $revenue = Payment::query()
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('partial_payment');
+    
+        // Get total consumption for the current month
+        $totalConsumptions = Reading::query()
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('total_consumption');
+    
         return [
-            // Stat::make('Total Consumers', $totalConsumers),
-            // Stat::make('Total Connections', $totalConnections),
-            Stat::make('Consumption', $totalConsumptions.' m³')
-            ->description('Total Consumptions of all Water Connections')
-            ->color('success'),
-            Stat::make('Revenue', '₱'.$revenue)
-            ->description('Total Recieved Payments')
-            ->color('success'),
-            // Stat::make('Total Water Consumption', $totalConsumptions.' m³'),
+            Stat::make("Consumption ({$currentMonth} {$currentYear})", $totalConsumptions . ' m³')
+                ->description("Total Consumptions")
+                ->color('success'),
+    
+            Stat::make("Revenue ({$currentMonth} {$currentYear})", '₱' . number_format($revenue, 2))
+                ->description("Total Received Payments")
+                ->color('success'),
+    
             Stat::make('Water Consumers', $totalConsumers)
-            ->description('Total Number of Active Water Consumers')
-            ->color('success'),
+                ->description("Total Number of Active Water Consumers")
+                ->color('success'),
         ];
     }
+    
+    
 }
