@@ -23,6 +23,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -32,7 +33,11 @@ use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Page implements HasForms, HasTable
 {
-    use InteractsWithForms, InteractsWithTable;
+    use InteractsWithForms;
+    use InteractsWithTable, HasFiltersForm {
+        HasFiltersForm::normalizeTableFilterValuesFromQueryString insteadof InteractsWithTable;
+        InteractsWithTable::normalizeTableFilterValuesFromQueryString as normalizeTableFilterValuesFromQueryStringFromTable;
+    }
 
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
@@ -55,6 +60,16 @@ class Dashboard extends Page implements HasForms, HasTable
     public $disconnectType;
 
     public $notification = [];
+    
+
+    // public function filtersForm(Form $form): Form
+    // {
+    //     return $form->schema([
+
+    //         TextInput::make('Bisag Unsa')
+
+    //     ]);
+    // }
 
     public function mount()
     {
@@ -84,7 +99,6 @@ class Dashboard extends Page implements HasForms, HasTable
             }
         }
     }
-
     public function table(Table $table): Table
     {
         return $table
@@ -93,13 +107,17 @@ class Dashboard extends Page implements HasForms, HasTable
             )
             ->columns([
                 TextColumn::make('title')->searchable(),
-                TextColumn::make('description')->searchable(),
-                TextColumn::make('created_at')->dateTime('F d Y h:i A')->searchable(),
+                TextColumn::make('description')->searchable()
+                ->limit(50),
+                TextColumn::make('created_at')->dateTime('F d Y h:i A')->searchable()
+                ->label('Announcement Date'),
             ])
             ->filters([
                 // ...
             ])
-            ->actions([])
+            ->actions([
+                // ViewAction::make(),
+            ])
             ->bulkActions([
                 // ...
             ])

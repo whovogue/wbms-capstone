@@ -1,5 +1,7 @@
 <x-filament-panels::page>
 
+
+
     <style>
         /* Fullscreen overlay */
         #loading-screen {
@@ -69,28 +71,32 @@
                             class="fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                             <div>
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold"
-                                        style="margin-right: 10px;">
-                                        <span class="text-xl">
-                                            <img src="{{ asset('profile-photos/' . auth()->user()->profile_photo_path) }}"
-                                                style="height: 40px;">
-                                        </span>
-                                    </div>
-                                    <div>Hello <span class="font-semibold">{{ auth()->user()->name }}</span></div>
+                                    <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold"
+                                    style="margin-right: 10px;">
+                                   <span class="text-xl">
+                                       <img src="{{ asset('profile-photos/' . auth()->user()->profile_photo_path) }}"
+                                            class="rounded-full object-cover w-full h-full">
+                                   </span>
+                               </div>
+                               
+                               
+                                    <div>Hello, <span class="font-semibold">{{ auth()->user()->name }}</span></div>
 
                                     @if (auth()->user()->waterConnections()->first()['pivot']['status'] === 'active')
                                         <div style="margin-left: auto">
-                                            <x-filament::modal>
+                                            <x-filament::modal class="max-w-5xl p-8 mx-auto">
+
                                                 <x-slot name="trigger">
                                                     <x-filament::button color="danger" size="xs"
-                                                        class="absolute top-2 right-2">
+                                                        class="absolute top-2 right-2"
+                                                        title="Request disconnection">
                                                         X
                                                     </x-filament::button>
                                                 </x-slot>
 
                                                 <!-- MODAL CONTENT -->
                                                 <x-slot name="heading">
-                                                    Pease select below which action you want to perform
+                                                    Please select an action to perform
                                                 </x-slot>
                                                 <x-filament::input.wrapper>
                                                     <x-filament::input.select wire:model="disconnectType">

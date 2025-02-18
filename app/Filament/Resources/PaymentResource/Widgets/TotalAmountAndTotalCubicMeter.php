@@ -53,7 +53,7 @@ class TotalAmountAndTotalCubicMeter extends BaseWidget
 
             Stat::make("Total Amount ({$queryDate->format('F Y')})", '₱' . number_format($totalAmountrecievable, 2))
                 ->description("Total Expected Receivable Amount")
-                ->color('success'),
+                ->color('success'), 
         ];
     }
 
