@@ -71,17 +71,6 @@ class Dashboard extends Page implements HasForms, HasTable
     //     ]);
     // }
 
-    public function filtersForm(Form $form): Form
-    {
-        return $form->schema([
-            TextInput::make('search')
-                ->label('Search')
-                ->required(),
-            // Add more form elements for filtering as needed
-        ]);
-    }
-    
-
     public function mount()
     {
         $auth = auth()->user();
