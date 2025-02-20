@@ -371,7 +371,7 @@ class RequestDocumentResource extends Resource
             ->columns([
                 TextColumn::make('user.name')->label('Generated/Requested by')
                     ->searchable()
-                    ->visible(auth()->user()->isAdmin()),
+                    ->visible(auth()->user()->isAdmin() || auth()->user()->isClerk()),
                 TextColumn::make('type')->label('Type')->formatStateUsing(fn (string $state): string => match ($state) {
                     'barangay_id' => 'Barangay ID',
                     'barangay_clearance' => 'Barangay Clearance',
@@ -391,7 +391,7 @@ class RequestDocumentResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('user_id')
-                    ->label('Consumers')
+                    ->label('Filter by User')
                     ->searchable()
                     ->visible(auth()->user()->isAdmin() || auth()->user()->isClerk())
                     ->options(User::query()->where('role', 'consumers')->whereNot('id', auth()->user()->id)->get()->pluck('name', 'id')),
