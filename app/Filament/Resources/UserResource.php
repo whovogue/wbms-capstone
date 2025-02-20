@@ -30,6 +30,7 @@ class UserResource extends Resource
     public static function canViewAny(): bool
     {
         return auth()->user()->isAdmin();
+        // return auth()->user()->isAdmin() || auth()->user()->isClerk();
     }
 
     public static function getNavigationBadge(): ?string
@@ -155,7 +156,36 @@ class UserResource extends Resource
                 TextColumn::make('created_at')->label('Date Created')->date('F d, Y h:i A')->timezone('Asia/Manila'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('purok')
+                    ->label('Filter by Purok')
+                    ->options([
+                        '1' => '1',
+                        '1A' => '1A',
+                        '2' => '2',
+                        '3A' => '3A',
+                        '3B' => '3B',
+                        '4A' => '4A',
+                        '4B' => '4B',
+                        '5A' => '5A',
+                        '5B' => '5B',
+                        '6' => '6',
+                        '6A1' => '6A1',
+                        '6B' => '6B',
+                    ])
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+                    Tables\Filters\SelectFilter::make('role')
+                    ->label('Filter by Role')
+                    ->options(fn () => User::query()
+                        ->select('role')
+                        ->distinct()
+                        ->pluck('role', 'role') // Fetch unique roles
+                        ->toArray()
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
