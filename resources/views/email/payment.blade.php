@@ -358,7 +358,7 @@
                             please feel free to contact our support team
                         </p>
 
-                        <p><b>Paid Amount:</b> {{ $data['amount'] }} </p>
+                        <p><b>Paid Amount: ₱</b> {{ $data['amount'] }} </p>
 
                         <p style="margin-bottom: 0"><b>Regards:</b></p>
                         <p style="margin: 0">Magsaysay Water Works</p><br>

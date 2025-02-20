@@ -16,7 +16,9 @@ class StatsOverview extends BaseWidget
         $currentMonth = now()->format('F');
         $currentYear = now()->year;
     
-        $totalConsumers = User::query()->where('role', 'consumers')->count();
+        $totalConsumers = WaterConnection::query()
+        ->where('status', 'active')
+        ->count();
         
         // Get revenue for the current month
         $revenue = Payment::query()
@@ -39,8 +41,8 @@ class StatsOverview extends BaseWidget
                 ->description("Total Received Payments")
                 ->color('success'),
     
-            Stat::make('Water Consumers', $totalConsumers)
-                ->description("Total Number of Active Water Consumers")
+            Stat::make('Water Connections', $totalConsumers)
+                ->description("Total Number of Active Water Connections")
                 ->color('success'),
         ];
     }
