@@ -45,14 +45,20 @@ class BillerWaterConnectionResource extends Resource
             ->columns([
                 TextColumn::make('reference_id')->label('Reference ID'),
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('address'),
+                // Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('purok'),
                 Tables\Columns\TextColumn::make('charge.name')->label('Type'),
-                Tables\Columns\TextColumn::make('phone_number')->label('Phone Number'),
+                // Tables\Columns\TextColumn::make('phone_number')->label('Phone Number'),
                 TextColumn::make('readings.previous_reading')->label('Previous Reading')
                     ->formatStateUsing(function ($record) {
                         return $record->readings()->orderBy('created_at', 'desc')->first()?->present_reading.' m³';
                     }),
+                    TextColumn::make('updated_at')
+                    ->label('Last Read Date')
+                    ->sortable()
+                    ->formatStateUsing(fn ($record) => optional($record->readings()->latest('updated_at')->first())->updated_at
+                        ? Carbon::parse($record->readings()->latest('updated_at')->value('updated_at'))->format('M d, Y')
+                        : null),
             ])
             ->filters([
                 //
