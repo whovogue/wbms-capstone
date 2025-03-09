@@ -31,6 +31,7 @@ class PDFController extends Controller
             'emergency_relation' => $request->emergency_relation,
             'emergency_address' => $request->emergency_address,
             'emergency_contact_number' => $request->emergency_contact_number,
+            'control_number' => $request->control_number,
         ];
 
         $pdf = \PDF::loadView('pdf.barangay_id', $data);
@@ -49,6 +50,9 @@ class PDFController extends Controller
             // 'certificate_number' => $request->certificate_number,
             'cert_no' => $request->cert_no,
             'purpose' => $request->purpose,
+            'auth_name' => $request->auth_name,
+            'auth_position' => $request->auth_position,
+            'auth_script' => $request->is_punong_barangay_not_available ? 'By the authority of the Punong Barangay' : '',
             'imagePath' => storage_path('app/images/clearance.png'),
         ];
 
@@ -152,12 +156,25 @@ class PDFController extends Controller
         ];
     }
 
+    // public function getLastMonthPeriod($date)
+    // {
+    //     $currentDate = Carbon::parse($date);
+
+    //     $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->toDateString();
+    //     $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->toDateString();
+
+    //     return [
+    //         'start' => $startOfLastMonth,
+    //         'end' => $endOfLastMonth,
+    //     ];
+    // }
+
     public function getLastMonthPeriod($date)
     {
         $currentDate = Carbon::parse($date);
 
-        $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->toDateString();
-        $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->toDateString();
+        $startOfLastMonth = $currentDate->copy()->startOfMonth()->toDateString();
+        $endOfLastMonth = $currentDate->copy()->endOfMonth()->toDateString();
 
         return [
             'start' => $startOfLastMonth,
@@ -165,16 +182,32 @@ class PDFController extends Controller
         ];
     }
 
-    public function getDiscountCutOffDate($date)
-    {
-        $carbonDate = Carbon::parse($date);
+    // public function getDiscountCutOffDate($date)
+    // {
+    //     $carbonDate = Carbon::parse($date);
 
-        $firstDayOfMonth = $carbonDate->copy()->startOfMonth();
+    //     $firstDayOfMonth = $carbonDate->copy()->startOfMonth();
 
-        $cutOffDate = $firstDayOfMonth->addDays(14)->format('F j, Y');
+    //     $cutOffDate = $firstDayOfMonth->addDays(14)->format('F j, Y');
 
-        return $cutOffDate;
+    //     return $cutOffDate;
+    // }
+
+    public static function getDiscountCutOffDate($date)
+{
+    $carbonDate = Carbon::parse($date);
+
+    $firstDayOfNextMonth = $carbonDate->copy()->addMonthNoOverflow()->startOfMonth();
+
+    $cutOffDate = $firstDayOfNextMonth->addDays(17);
+
+    // If the cutoff date falls on a weekend, move to the next Monday
+    if ($cutOffDate->isWeekend()) {
+        $cutOffDate->next(Carbon::MONDAY);
     }
+
+    return $cutOffDate->format('F j, Y');
+}
 
     public function saveChart(Request $request)
     {

@@ -21,7 +21,7 @@
         .full-page {
             width: 100%;
             height: 100%;
-            background: url('{{ public_path('images/barangayid.jpg') }}') no-repeat center top;
+            background: url('{{ public_path('images/barangayid.png') }}') no-repeat center top;
             /* Position the image at the top */
             background-size: cover;
             /* Cover the entire area */
@@ -113,7 +113,8 @@
                 {{-- edit sa margin top  from 10px --}}
     <div style="z-index: 100">
         <span style="font-size: 15px; color: yellow; margin-top: 10px; margin-left: 82px;font-weight: bold;">
-            ID NO. {{ $id_no }}
+            {{-- ID NO. {{ $id_no }} --}}
+            ID NO. {{ $control_number }}
         </span>
     </div>
 
@@ -137,7 +138,7 @@
 
     <div style="z-index: 1; margin-left: 640px;margin-top: -134px;position: absolute;">
         <span style="font-size: 12px;">
-            {{ ucfirst($height) }} cm
+            {{ ucfirst($height) }} ft
         </span>
     </div>
 </body>

@@ -47,15 +47,15 @@
         </div>
 
         <div style="margin-top: 15px;">
-            <span>NAME: <strong>{{ $name }}</strong></span>
+            <span>NAME: <strong>{{ strtoupper($name) }}</strong></span>
         </div>
 
         <div style="margin-top: 11px;">
-            <span>CIVIL STATUS: <strong>{{ ucfirst($civil_status) }}</strong></span>
+            <span>CIVIL STATUS: <strong>{{ strtoupper($civil_status) }}</strong></span>
         </div>
 
         <div style="margin-top: 11px;">
-            <span>GENDER: <strong>{{ $gender }}</strong></span>
+            <span>GENDER: <strong>{{ strtoupper($gender) }}</strong></span>
         </div>
 
         <div style="margin-top: 11px;">
@@ -63,7 +63,7 @@
         </div>
 
         <div style="margin-top: 11px;">
-            <span>ADDRESS: <strong>{{ $address }}</strong></span>
+            <span>ADDRESS: <strong>{{ strtoupper($address) }}</strong></span>
         </div>
 
         <div style="margin-top: 11px;">
@@ -85,7 +85,7 @@
         </div>
 
         <div style="margin-top: 15px;">
-            <span>PURPOSE: <strong>{{ $purpose }}</strong></span>
+            <span>PURPOSE: <strong>{{ strtoupper($purpose) }}</strong></span>
         </div>
 
         <div style="margin-top: 15px;">
@@ -94,8 +94,23 @@
         </div>
 
         <div
-            style="margin-top: 40px; margin-left: 120px; padding-top: 10px; border-top: 1px solid black; width: 150px;">
+            style="margin-top: 40px; margin-left: 220px; padding-top: 10px; border-top: 1px solid black; width: 150px;">
             Signature of Applicant
+        </div>
+
+        <div
+        style="margin-top: 150px; margin-left: 120px; padding-top: 10px; width: 250px; text-align: center; font-size: 13px;">
+        {{ $auth_script }}
+        </div>
+
+        <div
+        style="margin-top: 3px; margin-left: 180px; padding-top: 10px; width: 150px; text-align: center; font-size: 15px;">
+        <strong>{{ strtoupper($auth_name) }}</strong>
+    </div>
+
+        <div
+        style="margin-top: 0px; margin-left: 180px; padding-top: 3px; width: 150px; text-align: center; font-size: 13px;">
+        {{ $auth_position }}
         </div>
 
     </div>

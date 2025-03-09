@@ -159,27 +159,49 @@ class BillerWaterConnectionResource extends Resource
         ];
     }
 
+    //  CURRENT MONTH PERIOD NA NI KAY EVERY LAST WEEK OF THE MONTH MAN ANG READING
     public static function getLastMonthPeriod($date)
     {
         $currentDate = Carbon::parse($date);
 
-        $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->format('F j, Y');
-        $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->format('F j, Y');
+        // $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->format('F j, Y');
+        // $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->format('F j, Y');
+        $startOfMonth = $currentDate->copy()->startOfMonth()->format('F j, Y');
+        $endOfMonth = $currentDate->copy()->endOfMonth()->format('F j, Y');
 
         return [
-            'start' => $startOfLastMonth,
-            'end' => $endOfLastMonth,
+            // 'start' => $startOfLastMonth,
+            // 'end' => $endOfLastMonth,
+            'start' => $startOfMonth,
+            'end' => $endOfMonth,
         ];
     }
 
+    // public static function getDiscountCutOffDate($date)
+    // {
+    //     $carbonDate = Carbon::parse($date);
+
+    //     $firstDayOfMonth = $carbonDate->copy()->startOfMonth();
+
+    //     $cutOffDate = $firstDayOfMonth->addDays(14)->format('F j, Y');
+
+    //     return $cutOffDate;
+    // }
+
     public static function getDiscountCutOffDate($date)
-    {
-        $carbonDate = Carbon::parse($date);
+{
+    $carbonDate = Carbon::parse($date);
 
-        $firstDayOfMonth = $carbonDate->copy()->startOfMonth();
+    $firstDayOfNextMonth = $carbonDate->copy()->addMonthNoOverflow()->startOfMonth();
 
-        $cutOffDate = $firstDayOfMonth->addDays(14)->format('F j, Y');
+    $cutOffDate = $firstDayOfNextMonth->addDays(17);
 
-        return $cutOffDate;
+    // If the cutoff date falls on a weekend, move to the next Monday
+    if ($cutOffDate->isWeekend()) {
+        $cutOffDate->next(Carbon::MONDAY);
     }
+
+    return $cutOffDate->format('F j, Y');
+}
+
 }

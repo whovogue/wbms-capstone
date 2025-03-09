@@ -187,7 +187,7 @@
                 <td class="amount" style="text-align: right;font-family: 'DejaVu Sans', sans-serif;font-size: 13px; ">
                     ₱ {{ $total_charge }} </td>
                 <td class="label" style="text-align: right;font-family: 'DejaVu Sans', sans-serif;font-size: 13px;">
-                    ₱ {{ $total }}</td>
+                    ₱ {{ $total_charge }}</td>
             </tr>
 
             <tr>

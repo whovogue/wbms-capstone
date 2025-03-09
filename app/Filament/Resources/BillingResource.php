@@ -295,15 +295,37 @@ class BillingResource extends Resource
         ];
     }
 
+    // public static function isDiscounted($date, $dateNow)
+    // {
+    //     $carbonDate = Carbon::parse($date);
+    //     $carbonDateNow = Carbon::parse($dateNow);
+
+    //     // Need Update sa cutoff date: dapat start sa reading date then 18 days from that and if the 18th day is on weekends extend it to teh next monday
+
+    //     $firstDayOfMonth = $carbonDate->copy()->startOfMonth();
+
+    //     $readingdate = $carbonDate->copy()->$dateNow;
+
+    //     $cutOffDate = $firstDayOfMonth->addDays(14)->format('Y-m-d');
+    //     $cutOffDate2 = $readingdate->addDays(14)->format('Y-m-d');
+
+    //     return $carbonDateNow->lessThanOrEqualTo($cutOffDate);
+    // }
+
     public static function isDiscounted($date, $dateNow)
     {
         $carbonDate = Carbon::parse($date);
         $carbonDateNow = Carbon::parse($dateNow);
-
-        $firstDayOfMonth = $carbonDate->copy()->startOfMonth();
-
-        $cutOffDate = $firstDayOfMonth->addDays(14)->format('Y-m-d');
-
+    
+        $firstDayOfNextMonth = $carbonDate->copy()->addMonthNoOverflow()->startOfMonth();
+    
+        // Calculate cutoff date: 18 days from the first day of the next month
+        $cutOffDate = $firstDayOfNextMonth->addDays(17);
+    
+        // If the cutoff date falls on a weekend, move to the next Monday
+        if ($cutOffDate->isWeekend()) {
+            $cutOffDate->next(Carbon::MONDAY);
+        }
         return $carbonDateNow->lessThanOrEqualTo($cutOffDate);
     }
 
@@ -313,12 +335,17 @@ class BillingResource extends Resource
         $partialValue = 0;
         $isDiscount = BillingResource::isDiscounted($record->created_at, now()->format('Y-m-d'));
 
+        $withoutcharges = $record->billing_amount - 40;
+        $discountwithoutcharges = $withoutcharges * 0.05;
+        $totaldiscountedprice = $record->billing_amount - $discountwithoutcharges;
+
         foreach ($bills as $bill) {
             $difference = $bill->billing_amount - $bill->partial_payment;
             $partialValue += $difference;
         }
 
-        return $isDiscount ? ($record->billing_amount * 0.95) + $partialValue : $partialValue + $record->billing_amount;
+        return $isDiscount ? ($record->billing_amount - $discountwithoutcharges) + $partialValue : $partialValue + $record->billing_amount;
+        // return $isDiscount ? ($record->billing_amount * 0.95) + $partialValue : $partialValue + $record->billing_amount;
         // return $isDiscount ? ($partialValue + $record->billing_amount) * 0.95 : $partialValue + $record->billing_amount;
     }
 }
