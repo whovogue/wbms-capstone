@@ -74,7 +74,8 @@ class EditRequestDocument extends EditRecord
                 'emergency_relation' => $data['custom_fields']['emergency_relation'],
                 'emergency_address' => $data['custom_fields']['emergency_address'],
                 'emergency_contact_number' => $data['custom_fields']['emergency_contact_number'],
-                'id_no' => $this->barangayIDNumber(),
+                'control_number' => $data['custom_fields']['control_number'] ?? '',
+                // 'id_no' => $this->barangayIDNumber(),
             ];
 
             $pdfContent = \PDF::loadView('pdf.barangay_id', $id_data);
@@ -88,6 +89,9 @@ class EditRequestDocument extends EditRecord
                 // 'certificate_number' => $this->generateCertificateNumber(),
                 'cert_no' => $data['custom_fields']['cert_no'],
                 'purpose' => $data['custom_fields']['purpose'],
+                'auth_name' => $data['custom_fields']['auth_name'] ?? '',
+                'auth_position' => $data['custom_fields']['auth_position'] ?? '',
+                'auth_script' => !empty($data['is_punong_barangay_not_available']) ? 'By the authority of the Punong Barangay' : '',
                 'date_of_issue' => Carbon::now()->format('d-m-Y'),
             ];
 

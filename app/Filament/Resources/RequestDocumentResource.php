@@ -21,6 +21,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Filament\Forms\Components\Toggle;
 
 class RequestDocumentResource extends Resource
 {
@@ -154,8 +155,9 @@ class RequestDocumentResource extends Resource
                                 ->required(),
                             TextInput::make('custom_fields.height')
                                 ->label('Height')
-                                ->suffix('cm')
-                                ->numeric()
+                                ->suffix('Ft')
+                                // ->numeric()
+                                ->rule('regex:/^[0-9\'\"\.]+$/')
                                 ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
                                 ->required(),
                             DatePicker::make('custom_fields.date_of_birth')
@@ -250,10 +252,13 @@ class RequestDocumentResource extends Resource
                             '3B' => '3B',
                             '4A' => '4A',
                             '4B' => '4B',
+                            '4C' => '4C',
+                            '5' => '5',
                             '5A' => '5A',
                             '5B' => '5B',
                             '6' => '6',
-                            '6A1' => '6A1',
+                            '6A' => '6A',
+                            '6A-1' => '6A-1',
                             '6B' => '6B',
                         ])
                         ->label('Purok')
@@ -294,12 +299,17 @@ class RequestDocumentResource extends Resource
                         ->required(),
                     TextInput::make('custom_fields.height')
                         ->label('Height')
-                        ->suffix('cm')
-                        ->numeric()
+                        ->suffix('ft')
+                        // ->numeric()
+                        ->rule('regex:/^[0-9\'\"\.]+$/')
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
                         ->required(),
                     DatePicker::make('custom_fields.date_of_birth')
                         ->label('Date Of Birth')
+                        ->required(),
+                        TextInput::make('custom_fields.control_number')
+                        ->label('Control Number')
+                        ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
                         ->required(),
                     // NEW ADDED CERT NO.
                     TextInput::make('custom_fields.cert_no')
@@ -311,10 +321,11 @@ class RequestDocumentResource extends Resource
                         ->label('Address (Purok, Barangay, City/Municipality)')
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
                         ->required(),
-                    TextInput::make('custom_fields.purpose')
+                        TextInput::make('custom_fields.purpose')
                         ->label('Purpose')
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
-                        ->required(),
+                        ->required()
+                        ->afterStateUpdated(fn ($set, $state) => $set('custom_fields.purpose', strtoupper($state))),                    
                 ])->columns(2),
 
                 Section::make('Person Incase of Emergency')->schema([
@@ -338,6 +349,22 @@ class RequestDocumentResource extends Resource
                 ])
                     ->columns(2)
                     ->visible(fn (callable $get) => ($get('type') === 'barangay_id')),
+
+                    Section::make('Authorized Personnel')->schema([
+
+                    TextInput::make('custom_fields.auth_name')
+                        ->label('Authorized Name')
+                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available'))
+                        ->required(fn (callable $get) => $get('is_punong_barangay_not_available')),
+                    
+                    TextInput::make('custom_fields.auth_position')
+                        ->label('Authorized Position')
+                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available'))
+                        ->required(fn (callable $get) => $get('is_punong_barangay_not_available')),
+
+                    ])
+                        ->columns(2)
+                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available')),
             ])
                 ->columnSpan(2),
 
@@ -360,6 +387,12 @@ class RequestDocumentResource extends Resource
                             'approved' => 'Approved',
                             'rejected' => 'Rejected',
                         ]),
+                        Toggle::make('is_punong_barangay_not_available')
+                        ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
+                        ->label('Is Punong Barangay Not Available?')
+                        ->onIcon('heroicon-m-check-badge')
+                        ->offIcon('heroicon-m-x-circle')
+                        ->reactive(),
                 ]),
             ]),
         ];

@@ -22,6 +22,13 @@ class Check2FA
             return $next($request);
         }
 
+        $user = Auth::user();
+
+        // Skip 2FA if the user is a reader
+        if ($user->role === 'reader') {
+            return $next($request);
+        }
+
         // If the session key for 2FA verification does not exist, redirect to the 2FA page
         if (!session()->has('user_2fa')) {
             // Prevent redirection loops by ensuring the current route isn't the 2FA route
