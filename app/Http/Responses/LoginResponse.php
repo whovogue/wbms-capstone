@@ -16,6 +16,14 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
         if ($user && $user->role === 'reader') {
             return redirect('app');
         }
+        // If the user is a Book Keeper, redirect to '/app'
+        if ($user && $user->role === 'admin') {
+            return redirect('app');
+        }
+                        // If the user is a Clerk, redirect to '/app'
+        if ($user && $user->role === 'clerk') {
+            return redirect('app');
+        }
 
         // For other users, redirect to 2FA
         if ($user) {

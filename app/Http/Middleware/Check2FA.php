@@ -28,6 +28,14 @@ class Check2FA
         if ($user->role === 'reader') {
             return $next($request);
         }
+        // Skip 2FA if the user is a 
+        if ($user->role === 'admin') {
+            return $next($request);
+        }
+        // Skip 2FA if the user is a Clerk
+        if ($user->role === 'clerk') {
+            return $next($request);
+        }
 
         // If the session key for 2FA verification does not exist, redirect to the 2FA page
         if (!session()->has('user_2fa')) {
