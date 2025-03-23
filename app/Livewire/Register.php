@@ -132,7 +132,6 @@ class Register extends RegisterPage
                 '5' => '5',
                 '5A' => '5A',
                 '5B' => '5B',
-                '6' => '6',
                 '6A' => '6A',
                 '6A-1' => '6A-1',
                 '6B' => '6B',

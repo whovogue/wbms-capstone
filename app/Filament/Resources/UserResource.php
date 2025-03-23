@@ -94,7 +94,6 @@ class UserResource extends Resource
                             '4B' => '4B',
                             '5A' => '5A',
                             '5B' => '5B',
-                            '6' => '6',
                             '6A1' => '6A1',
                             '6B' => '6B',
                         ])
@@ -170,7 +169,6 @@ class UserResource extends Resource
                         '5' => '5',
                         '5A' => '5A',
                         '5B' => '5B',
-                        '6' => '6',
                         '6A' => '6A',
                         '6A-1' => '6A-1',
                         '6B' => '6B',
