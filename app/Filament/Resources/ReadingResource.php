@@ -102,19 +102,16 @@ class ReadingResource extends Resource
 
                                 $lastReading = $record->previous_reading;
 
-                                return $lastReading + 1 ?? 1;
+                                // return $lastReading + 1 ?? 1;
+                                return $lastReading;
                             })
                             ->required()
                             ->suffix('m³'),
                     ])
                     ->visible(function ($record) {
                         $bill = Bill::where('reading_id', $record->id)->first();
-
-                        if ($bill->status == 'pending') {
-                            return true;
-                        }
-
-                        return false;
+                    
+                        return $bill && $bill->status === 'pending';
                     }),
             ])
             ->bulkActions([
