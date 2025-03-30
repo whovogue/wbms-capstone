@@ -18,10 +18,10 @@ class ListInstallations extends ListRecords
         ];
     }
 
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            InstallationOverview::class,
-        ];
-    }
+    // protected function getHeaderWidgets(): array
+    // {
+    //     return [
+    //         InstallationOverview::class,
+    //     ];
+    // }
 }

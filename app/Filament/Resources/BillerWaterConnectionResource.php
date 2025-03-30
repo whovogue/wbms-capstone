@@ -72,7 +72,8 @@ class BillerWaterConnectionResource extends Resource
 
                                 $lastReading = $record->readings()->orderBy('created_at', 'desc')->first()?->present_reading;
 
-                                return $lastReading + 1 ?? 1;
+                                // return $lastReading + 1 ?? 1;
+                                return $lastReading;
                             })
                             ->required()
                             ->suffix('m³'),
@@ -106,18 +107,43 @@ class BillerWaterConnectionResource extends Resource
                             'previous_reading' => $previousReading,
                         ]);
 
-                        $amount = $totalReading > $minimumConsumption ? (($totalReading - $minimumConsumption) * $exceedChargePerUnit) + $minimumValue : $minimumValue;
+                        // $amount = $totalReading > $minimumConsumption ? (($totalReading - $minimumConsumption) * $exceedChargePerUnit) + $minimumValue : $minimumValue;
+
+                        $amount = ($totalReading > 0)
+                        ? ($totalReading > $minimumConsumption 
+                        ? (($totalReading - $minimumConsumption) * $exceedChargePerUnit) + $minimumValue 
+                        : $minimumValue) 
+                        : 0; // Set billing amount to 0 if total consumption is 0
+
+                        // $bills = $record->bills()->create([
+                        //     'billing_amount' => $amount + 40,
+                        //     'reading_id' => $reading->id,
+                        //     'status' => 'pending',
+                        //     'minimum' => $minimumValue,
+                        //     'minimumConsumption' => $minimumConsumption,
+                        //     'exceedChargePerUnit' => $exceedChargePerUnit,
+                        // ]);
 
                         $bills = $record->bills()->create([
-                            'billing_amount' => $amount + 40,
+                            'billing_amount' => $amount > 0 ? $amount + 40 : 0, // Ensure the final billing amount is 0 if needed
                             'reading_id' => $reading->id,
+                            // 'status' => $amount > 0 ? 'pending' : 'paid', // Mark as paid if no charge
                             'status' => 'pending',
                             'minimum' => $minimumValue,
                             'minimumConsumption' => $minimumConsumption,
                             'exceedChargePerUnit' => $exceedChargePerUnit,
                         ]);
 
-                        if ($record->bills()->orderBy('created_at', 'desc')->first()?->status === 'pending') {
+                        // if ($record->bills()->orderBy('created_at', 'desc')->first()?->status === 'pending') {
+                        //     Payment::create([
+                        //         'amount' => $amount + 40,
+                        //         'bill_id' => $bills->id,
+                        //         'partial_payment' => 0,
+                        //         'water_connection_id' => $record->id,
+                        //     ]);
+                        // }
+
+                        if ($amount > 0 && $record->bills()->orderBy('created_at', 'desc')->first()?->status === 'pending') {
                             Payment::create([
                                 'amount' => $amount + 40,
                                 'bill_id' => $bills->id,

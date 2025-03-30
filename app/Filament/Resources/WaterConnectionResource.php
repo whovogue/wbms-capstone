@@ -113,11 +113,11 @@ class WaterConnectionResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 // Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('purok'),
-                Tables\Columns\TextColumn::make('phone_number'),
-                Tables\Columns\TextColumn::make('connected_date')
-                    ->formatStateUsing(fn (string $state) => is_null($state) ? 'N/A' : $state),
-                Tables\Columns\TextColumn::make('charge.name')
-                    ->label('Type'),
+                // Tables\Columns\TextColumn::make('phone_number'),
+                // Tables\Columns\TextColumn::make('connected_date')
+                //     ->formatStateUsing(fn (string $state) => is_null($state) ? 'N/A' : $state),
+                // Tables\Columns\TextColumn::make('charge.name')
+                //     ->label('Type'),
                 Tables\Columns\TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
                     'pending' => 'gray',
                     'active' => 'success',

@@ -329,23 +329,48 @@ class BillingResource extends Resource
         return $carbonDateNow->lessThanOrEqualTo($cutOffDate);
     }
 
+    // public static function getTotal($record)
+    // {
+    //     $bills = Bill::where('status', 'partial')->get();
+    //     $partialValue = 0;
+    //     $isDiscount = BillingResource::isDiscounted($record->created_at, now()->format('Y-m-d'));
+
+    //     $withoutcharges = $record->billing_amount - 40;
+    //     $discountwithoutcharges = $withoutcharges * 0.05;
+    //     $totaldiscountedprice = $record->billing_amount - $discountwithoutcharges;
+
+    //     foreach ($bills as $bill) {
+    //         $difference = $bill->billing_amount - $bill->partial_payment;
+    //         $partialValue += $difference;
+    //     }
+
+    //     return $isDiscount ? ($record->billing_amount - $discountwithoutcharges) + $partialValue : $partialValue + $record->billing_amount;
+    //     // return $isDiscount ? ($record->billing_amount * 0.95) + $partialValue : $partialValue + $record->billing_amount;
+    //     // return $isDiscount ? ($partialValue + $record->billing_amount) * 0.95 : $partialValue + $record->billing_amount;
+    // }
+
     public static function getTotal($record)
-    {
-        $bills = Bill::where('status', 'partial')->get();
-        $partialValue = 0;
-        $isDiscount = BillingResource::isDiscounted($record->created_at, now()->format('Y-m-d'));
+{
+    // Fetch only the bill related to the given record
+    $bills = Bill::where('status', 'partial')
+        ->where('id', $record->id) // Only fetch the relevant bill
+        ->get();
+        
+    $partialValue = 0;
+    $isDiscount = BillingResource::isDiscounted($record->created_at, now()->format('Y-m-d'));
 
-        $withoutcharges = $record->billing_amount - 40;
-        $discountwithoutcharges = $withoutcharges * 0.05;
-        $totaldiscountedprice = $record->billing_amount - $discountwithoutcharges;
+    $withoutcharges = max($record->billing_amount - 40, 0); // Ensure it does not go negative
+    $discountwithoutcharges = $withoutcharges * 0.05;
+    $totaldiscountedprice = $record->billing_amount - $discountwithoutcharges;
 
-        foreach ($bills as $bill) {
-            $difference = $bill->billing_amount - $bill->partial_payment;
-            $partialValue += $difference;
-        }
-
-        return $isDiscount ? ($record->billing_amount - $discountwithoutcharges) + $partialValue : $partialValue + $record->billing_amount;
-        // return $isDiscount ? ($record->billing_amount * 0.95) + $partialValue : $partialValue + $record->billing_amount;
-        // return $isDiscount ? ($partialValue + $record->billing_amount) * 0.95 : $partialValue + $record->billing_amount;
+    foreach ($bills as $bill) {
+        $difference = max($bill->billing_amount - $bill->partial_payment, 0); // Prevent negative values
+        $partialValue += $difference;
     }
+
+    return $isDiscount 
+        ? ($record->billing_amount - $discountwithoutcharges) + $partialValue 
+        : $partialValue + $record->billing_amount;
+}
+
 }

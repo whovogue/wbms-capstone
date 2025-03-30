@@ -139,7 +139,8 @@
                 <td style="text-align: right;font-family: 'DejaVu Sans', sans-serif;font-size: 13px;">
                     ₱ {{ $excess_charge }}.00</td>
                 <td style="text-align: right;font-weight: bold;font-family: 'DejaVu Sans', sans-serif;font-size: 13px;">
-                    ₱ {{ $total_charge - 40 }}.00</td>
+                    ₱ {{ max($total_charge - 40, 0) }}.00
+
             </tr>
             <tr>
                 <th class="total" colspan="7">-</th>
