@@ -127,7 +127,17 @@ class WaterConnectionResource extends Resource
                 TextColumn::make('created_at')->label('Date Created')->date('F d, Y h:i A')->timezone('Asia/Manila'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                ->label('Filter by Status')
+                ->options(fn () => WaterConnection::query()
+                    ->select('status')
+                    ->distinct()
+                    ->pluck('status', 'status') // Fetch unique roles
+                    ->toArray()
+                )
+                ->searchable()
+                ->preload()
+                ->multiple(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
