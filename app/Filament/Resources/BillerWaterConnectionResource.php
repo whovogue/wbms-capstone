@@ -186,20 +186,34 @@ class BillerWaterConnectionResource extends Resource
     }
 
     //  CURRENT MONTH PERIOD NA NI KAY EVERY LAST WEEK OF THE MONTH MAN ANG READING
+    // public static function getLastMonthPeriod($date)
+    // {
+    //     $currentDate = Carbon::parse($date);
+
+    //     $startOfMonth = $currentDate->copy()->subMonth()->startOfMonth()->format('F j, Y');
+    //     $endOfMonth = $currentDate->copy()->subMonth()->endOfMonth()->format('F j, Y');
+    //     // $startOfMonth = $currentDate->copy()->startOfMonth()->format('F j, Y');
+    //     // $endOfMonth = $currentDate->copy()->endOfMonth()->format('F j, Y');
+
+    //     return [
+    //         'start' => $startOfMonth,
+    //         'end' => $endOfMonth,
+    //         // 'start' => $startOfMonth,
+    //         // 'end' => $endOfMonth,
+    //     ];
+    // }
+
+    // PREVIOUS MONTH ANG COVERAGE
     public static function getLastMonthPeriod($date)
     {
         $currentDate = Carbon::parse($date);
 
-        // $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->format('F j, Y');
-        // $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->format('F j, Y');
-        $startOfMonth = $currentDate->copy()->startOfMonth()->format('F j, Y');
-        $endOfMonth = $currentDate->copy()->endOfMonth()->format('F j, Y');
+        $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->format('F j, Y');
+        $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->format('F j, Y');
 
         return [
-            // 'start' => $startOfLastMonth,
-            // 'end' => $endOfLastMonth,
-            'start' => $startOfMonth,
-            'end' => $endOfMonth,
+            'start' => $startOfLastMonth,
+            'end' => $endOfLastMonth,
         ];
     }
 
@@ -218,6 +232,7 @@ class BillerWaterConnectionResource extends Resource
 {
     $carbonDate = Carbon::parse($date);
 
+    // $firstDayOfNextMonth = $carbonDate->copy()->addMonthNoOverflow()->startOfMonth();
     $firstDayOfNextMonth = $carbonDate->copy()->addMonthNoOverflow()->startOfMonth();
 
     $cutOffDate = $firstDayOfNextMonth->addDays(17);
