@@ -156,32 +156,31 @@ class PDFController extends Controller
         ];
     }
 
-    public function getLastMonthPeriod($date)
-    {
-        $currentDate = Carbon::parse($date);
-
-        $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->toDateString();
-        $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->toDateString();
-
-        return [
-            'start' => $startOfLastMonth,
-            'end' => $endOfLastMonth,
-        ];
-    }
-
-
     // public function getLastMonthPeriod($date)
     // {
     //     $currentDate = Carbon::parse($date);
 
-    //     $startOfLastMonth = $currentDate->copy()->startOfMonth()->toDateString();
-    //     $endOfLastMonth = $currentDate->copy()->endOfMonth()->toDateString();
+    //     $startOfLastMonth = $currentDate->copy()->subMonth()->startOfMonth()->toDateString();
+    //     $endOfLastMonth = $currentDate->copy()->subMonth()->endOfMonth()->toDateString();
 
     //     return [
     //         'start' => $startOfLastMonth,
     //         'end' => $endOfLastMonth,
     //     ];
     // }
+
+    public function getLastMonthPeriod($date)
+    {
+        $currentDate = Carbon::parse($date);
+
+        $startOfLastMonth = $currentDate->copy()->startOfMonth()->toDateString();
+        $endOfLastMonth = $currentDate->copy()->endOfMonth()->toDateString();
+
+        return [
+            'start' => $startOfLastMonth,
+            'end' => $endOfLastMonth,
+        ];
+    }
 
     // public function getDiscountCutOffDate($date)
     // {
