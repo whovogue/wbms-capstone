@@ -50,6 +50,7 @@ class PDFController extends Controller
             // 'certificate_number' => $request->certificate_number,
             'cert_no' => $request->cert_no,
             'purpose' => $request->purpose,
+            'control_number' => $request->control_number,
             'auth_name' => $request->auth_name,
             'auth_position' => $request->auth_position,
             'auth_script' => $request->is_punong_barangay_not_available ? 'By the authority of the Punong Barangay' : '',

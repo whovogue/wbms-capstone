@@ -124,19 +124,19 @@
         </span>
     </div>
 
-    <div style="z-index: 1; margin-left: 665px;margin-top: -161px;position: absolute;">
+    <div style="z-index: 1; margin-left: 670px;margin-top: -161px;position: absolute;">
         <span style="font-size: 12px;">
             {{ ucfirst($blood_type) }}
         </span>
     </div>
 
-    <div style="z-index: 1; margin-left: 640px;margin-top: -147px;position: absolute;">
+    <div style="z-index: 1; margin-left: 650px;margin-top: -147px;position: absolute;">
         <span style="font-size: 12px;">
             {{ ucfirst($weight) }} kg
         </span>
     </div>
 
-    <div style="z-index: 1; margin-left: 640px;margin-top: -134px;position: absolute;">
+    <div style="z-index: 1; margin-left: 650px;margin-top: -134px;position: absolute;">
         <span style="font-size: 12px;">
             {{ ucfirst($height) }} ft
         </span>

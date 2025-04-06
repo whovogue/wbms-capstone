@@ -113,6 +113,13 @@
         {{ $auth_position }}
         </div>
 
+        <div style="z-index: 100">
+            <span style="font-size: 15px; color: blue; margin-top: 10px; margin-left: -250px;font-weight: bold;">
+                {{-- ID NO. {{ $id_no }} --}}
+                CONTROL NO. {{ $control_number }}
+            </span>
+        </div>
+
     </div>
 </body>
 
