@@ -93,6 +93,7 @@ class EditRequestDocument extends EditRecord
                 'auth_position' => $data['custom_fields']['auth_position'] ?? '',
                 'auth_script' => !empty($data['is_punong_barangay_not_available']) ? 'By the authority of the Punong Barangay' : '',
                 'date_of_issue' => Carbon::now()->format('d-m-Y'),
+                'control_number' => $data['custom_fields']['control_number'] ?? '',
             ];
 
             $pdfContent = \PDF::loadView('pdf.barangay_clearance', $certificate_data)

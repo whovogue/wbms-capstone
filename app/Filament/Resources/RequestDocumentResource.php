@@ -305,10 +305,10 @@ class RequestDocumentResource extends Resource
                     DatePicker::make('custom_fields.date_of_birth')
                         ->label('Date Of Birth')
                         ->required(),
-                        TextInput::make('custom_fields.control_number')
-                        ->label('Control Number')
-                        ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
-                        ->required(),
+                        // TextInput::make('custom_fields.control_number')
+                        // ->label('Control Number')
+                        // ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
+                        // ->required(),
                     // NEW ADDED CERT NO.
                     TextInput::make('custom_fields.cert_no')
                     ->label('CERT No. (Leave Blank if not applicable)')
@@ -323,7 +323,11 @@ class RequestDocumentResource extends Resource
                         ->label('Purpose')
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
                         ->required()
-                        ->afterStateUpdated(fn ($set, $state) => $set('custom_fields.purpose', strtoupper($state))),                    
+                        ->afterStateUpdated(fn ($set, $state) => $set('custom_fields.purpose', strtoupper($state))), 
+                        TextInput::make('custom_fields.control_number')
+                        ->label('Control Number')
+                        // ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
+                        ->required(),                   
                 ])->columns(2),
 
                 Section::make('Person Incase of Emergency')->schema([
