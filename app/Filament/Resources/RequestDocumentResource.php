@@ -395,6 +395,12 @@ class RequestDocumentResource extends Resource
                         ->onIcon('heroicon-m-check-badge')
                         ->offIcon('heroicon-m-x-circle')
                         ->reactive(),
+                        Toggle::make('custom_fields.e_sign')
+                        ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
+                        ->label('Attach an E-Signature?')
+                        ->onIcon('heroicon-m-check-badge')
+                        ->offIcon('heroicon-m-x-circle')
+                        ->reactive(),
                 ]),
             ]),
         ];

@@ -104,7 +104,7 @@
         </div>
 
         <div
-        style="margin-top: 3px; margin-left: 180px; padding-top: 10px; width: 150px; text-align: center; font-size: 15px;">
+        style="margin-top: 3px; margin-left: 130px; padding-top: 10px; width: 250px; text-align: center; font-size: 15px;">
         <strong>{{ strtoupper($auth_name) }}</strong>
     </div>
 
