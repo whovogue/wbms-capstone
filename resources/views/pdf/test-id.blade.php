@@ -1,3 +1,4 @@
+{{-- FOR TESTING PURPOSES ONLY --}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +22,7 @@
         .full-page {
         width: 100%;
         height: 100%;
-        background: url('{{ public_path($e_sign ? 'images/barangayid_esign.png' : 'images/barangayid.png') }}') no-repeat center top;
+        background: url('{{ public_path('images/barangayid.png') }}') no-repeat center top;
         background-size: cover;
         position: absolute;
         top: 0;

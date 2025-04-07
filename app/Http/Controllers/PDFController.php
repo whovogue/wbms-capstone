@@ -32,6 +32,7 @@ class PDFController extends Controller
             'emergency_address' => $request->emergency_address,
             'emergency_contact_number' => $request->emergency_contact_number,
             'control_number' => $request->control_number,
+            'e_sign' => $request->e_sign,
         ];
 
         $pdf = \PDF::loadView('pdf.barangay_id', $data);

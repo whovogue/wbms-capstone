@@ -63,7 +63,8 @@ class EditRequestDocument extends EditRecord
                 'name' => $data['custom_fields']['name'],
                 'purok' => $data['custom_fields']['purok'],
                 'date_of_birth' => $data['custom_fields']['date_of_birth'],
-                'age' => ceil(Carbon::parse($data['custom_fields']['date_of_birth'])->diffInYears(Carbon::now())),
+                // 'age' => ceil(Carbon::parse($data['custom_fields']['date_of_birth'])->diffInYears(Carbon::now())),
+                 'age' => Carbon::parse($data['custom_fields']['date_of_birth'])->age,
                 'civil_status' => $data['custom_fields']['civil_status'],
                 'citizenship' => $data['custom_fields']['citizenship'],
                 'gender' => $data['custom_fields']['gender'],
@@ -75,6 +76,7 @@ class EditRequestDocument extends EditRecord
                 'emergency_address' => $data['custom_fields']['emergency_address'],
                 'emergency_contact_number' => $data['custom_fields']['emergency_contact_number'],
                 'control_number' => $data['custom_fields']['control_number'] ?? '',
+                'e_sign' => $data['custom_fields']['e_sign'] ?? '',
                 // 'id_no' => $this->barangayIDNumber(),
             ];
 
@@ -84,7 +86,8 @@ class EditRequestDocument extends EditRecord
                 'name' => $data['custom_fields']['name'],
                 'civil_status' => $data['custom_fields']['civil_status'],
                 'gender' => ucfirst($data['custom_fields']['gender']),
-                'age' => ceil(Carbon::parse($data['custom_fields']['date_of_birth'])->diffInYears(Carbon::now())),
+                // 'age' => ceil(Carbon::parse($data['custom_fields']['date_of_birth'])->diffInYears(Carbon::now())),
+                'age' => Carbon::parse($data['custom_fields']['date_of_birth'])->age,
                 'address' => $data['custom_fields']['address'],
                 // 'certificate_number' => $this->generateCertificateNumber(),
                 'cert_no' => $data['custom_fields']['cert_no'],
