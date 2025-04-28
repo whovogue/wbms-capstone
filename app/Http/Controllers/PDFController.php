@@ -50,6 +50,7 @@ class PDFController extends Controller
             'address' => $request->address,
             // 'certificate_number' => $request->certificate_number,
             'cert_no' => $request->cert_no,
+            'DPI' => $request->DPI,
             'purpose' => $request->purpose,
             'control_number' => $request->control_number,
             'auth_name' => $request->auth_name,
