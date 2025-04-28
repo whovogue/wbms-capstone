@@ -67,12 +67,11 @@
         </div>
 
         <div style="margin-top: 11px;">
-            <span>CERT. NO.: <strong>{{ $cert_no }}</strong></span>
+            <span>CERT. NO.: <strong>{{ strtoupper($cert_no) }}</strong></span>
         </div>
 
         <div style="margin-top: 11px;">
-            <span>DATE & PLACE OF ISSUANCE: <strong>{{ $date_of_issue }} @
-                    BRGY.MAGSAYSAY</strong></span>
+            <span>DATE & PLACE OF ISSUANCE: <strong>{{ strtoupper($DPI) }}</strong></span>
         </div>
 
         <div style="margin-top: 15px;">

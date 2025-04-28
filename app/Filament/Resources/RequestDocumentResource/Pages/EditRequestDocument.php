@@ -91,6 +91,7 @@ class EditRequestDocument extends EditRecord
                 'address' => $data['custom_fields']['address'],
                 // 'certificate_number' => $this->generateCertificateNumber(),
                 'cert_no' => $data['custom_fields']['cert_no'],
+                'DPI' => $data['custom_fields']['DPI'],
                 'purpose' => $data['custom_fields']['purpose'],
                 'auth_name' => $data['custom_fields']['auth_name'] ?? '',
                 'auth_position' => $data['custom_fields']['auth_position'] ?? '',

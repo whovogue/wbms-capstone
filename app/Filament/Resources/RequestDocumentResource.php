@@ -314,7 +314,9 @@ class RequestDocumentResource extends Resource
                     ->label('CERT No. (Leave Blank if not applicable)')
                     // ->default(auth()->user()->cert_no)
                     ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance')),
-                    // NEW ADDED CERT NO.  
+                    TextInput::make('custom_fields.DPI')
+                    ->label('Date & Place of Issuance')
+                    ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance')),
                     TextInput::make('custom_fields.address')
                         ->label('Address (Purok, Barangay, City/Municipality)')
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
