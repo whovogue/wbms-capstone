@@ -23,7 +23,7 @@ class BillerActiveWaterConnection extends BaseWidget
 
         return [
             Stat::make('Total Active Connections', $activeConnections),
-            Stat::make('Unread Water Connections', $unreadConnections),
+            // Stat::make('Unread Water Connections', $unreadConnections),
             // Stat::make('Read Water Connections', $readConnections),
 
         ];

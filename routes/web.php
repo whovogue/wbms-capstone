@@ -12,6 +12,10 @@ use Barryvdh\DomPDF\Facade;
 
 Route::redirect('/', '/app');
 
+Route::get('/login', function () {
+    return redirect('/app/login');
+})->name('login');
+
 Route::get('/view-document/{requestDocument}', [PDFController::class, 'viewDocument'])->name('view-document')->middleware('auth');
 
 Route::get('/generate-bill-pdf/{bill}', [PDFController::class, 'generateBillPDF'])->name('generate-bill-pdf')->middleware('auth');
@@ -71,4 +75,5 @@ Route::get('2fa', TwoFactor::class)->name('2fa.index');
     
 //     return $pdf->stream('test-id.pdf');  // Download the generated PDF
 // });
+
 

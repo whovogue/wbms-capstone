@@ -80,69 +80,120 @@ class BillerWaterConnectionResource extends Resource
                     ])
                     ->action(function ($data, Model $record) {
                         // charge values
-                        $minimumValue = $record->charge->minimum; //125
-                        $minimumConsumption = $record->charge->minimumConsumption; //10
-                        $exceedChargePerUnit = $record->charge->exceedChargePerUnit; //13
-
+                        $minimumValue = $record->charge->minimum; // 125
+                        $minimumConsumption = $record->charge->minimumConsumption; // 10
+                        $exceedChargePerUnit = $record->charge->exceedChargePerUnit; // 13
+                    
                         $previousReading = $record->readings()->orderBy('created_at', 'desc')->first()?->present_reading ?? 0;
                         $totalReading = $data['reading'] - $previousReading;
                         $billsPartial = $record->bills()->where('status', 'partial')->get();
                         $billsPending = $record->bills()->where('status', 'pending')->get();
                         $partialValue = 0;
-
+                    
                         foreach ($billsPending as $pending) {
-                            $pending->status = 'partial';
+                            $pending->status = 'unpaid';
                             $pending->save();
                         }
-
+                    
                         foreach ($billsPartial as $bill) {
                             $difference = $bill->billing_amount - $bill->partial_payment;
                             $partialValue += $difference;
                         }
 
+                        $advance = 0;
+
+                        $lastBill = $record->bills()->latest()->first();
+                        $secondToLastBill = $record->bills()->orderBy('created_at', 'desc')->skip(2)->first();
+                        $paidBill = $record->bills()
+                        ->where('status', 'paid')
+                        ->orderByDesc('created_at')
+                        ->first();
+                        $unpaidBill = $record->bills()
+                        ->where('status', 'unpaid')
+                        ->orderByDesc('created_at')
+                        ->skip(1);
+                        $advanceFromAnyBill = $record->bills()
+                        ->where('advance_payment', '>=', 1)
+                        ->orderByDesc('created_at')
+                        ->first();
+
+                        if ($lastBill && $lastBill->status === 'unpaid') {
+                        // Mark last bill as unpaid
+                        $unpaidBill->update([
+                            'advance_payment' => 0,
+                        ]);
+                        $lastBill->update([
+                            'advance_payment' => $advanceFromAnyBill?->advance_payment ?? 0,
+                        ]);
+
+                        $paidBill->update([
+                            'advance_payment' => 0,
+                        ]);
+
+
+
+                        // $unpaidBill->update([
+
+                        //     'advance_payment' => $advanceFromAnyBill,
+
+                        // ]);
+
+                        // $advanceFromAnyBill->update([
+
+                        //     'advance_payment' => 0,
+
+                        // ]);
+
+                        // Check if the second-to-last bill is paid and has advance_payment
+                        // if ($secondToLastBill && $secondToLastBill->status === 'paid' && $secondToLastBill->advance_payment > 0) {
+                        //     $advance = $secondToLastBill->advance_payment;
+
+                            // Transfer advance_payment to the newly marked unpaid bill
+                        //     $lastBill->update([
+                        //         'advance_payment' => $advance,
+                        //     ]);
+
+                            // Reset the old bill's advance_payment
+                        //     $secondToLastBill->update([
+                        //         'advance_payment' => 0,
+                        //     ]);
+                        // }
+                        }
+
+                        // $allBill->update([
+                        // 'advance_payment' => 0,
+                        // ]);
+                    
+                        // Create the new reading
                         $reading = $record->readings()->create([
                             'present_reading' => $data['reading'],
                             'biller_user_id' => auth()->user()->id,
                             'total_consumption' => $totalReading,
                             'previous_reading' => $previousReading,
                         ]);
-
-                        // $amount = $totalReading > $minimumConsumption ? (($totalReading - $minimumConsumption) * $exceedChargePerUnit) + $minimumValue : $minimumValue;
-
+                    
                         $amount = ($totalReading > 0)
-                        ? ($totalReading > $minimumConsumption 
-                        ? (($totalReading - $minimumConsumption) * $exceedChargePerUnit) + $minimumValue 
-                        : $minimumValue) 
-                        : 0; // Set billing amount to 0 if total consumption is 0
-
-                        // $bills = $record->bills()->create([
-                        //     'billing_amount' => $amount + 40,
-                        //     'reading_id' => $reading->id,
-                        //     'status' => 'pending',
-                        //     'minimum' => $minimumValue,
-                        //     'minimumConsumption' => $minimumConsumption,
-                        //     'exceedChargePerUnit' => $exceedChargePerUnit,
-                        // ]);
-
+                            ? ($totalReading > $minimumConsumption 
+                                ? (($totalReading - $minimumConsumption) * $exceedChargePerUnit) + $minimumValue 
+                                : $minimumValue) 
+                            : 0; // Set billing amount to 0 if total consumption is 0
+                    
                         $bills = $record->bills()->create([
-                            'billing_amount' => $amount > 0 ? $amount + 40 : 0, // Ensure the final billing amount is 0 if needed
+                            'billing_amount' => $amount > 0 ? $amount + 40 : 0,
                             'reading_id' => $reading->id,
-                            // 'status' => $amount > 0 ? 'pending' : 'paid', // Mark as paid if no charge
                             'status' => 'pending',
                             'minimum' => $minimumValue,
                             'minimumConsumption' => $minimumConsumption,
                             'exceedChargePerUnit' => $exceedChargePerUnit,
                         ]);
 
-                        // if ($record->bills()->orderBy('created_at', 'desc')->first()?->status === 'pending') {
-                        //     Payment::create([
-                        //         'amount' => $amount + 40,
-                        //         'bill_id' => $bills->id,
-                        //         'partial_payment' => 0,
-                        //         'water_connection_id' => $record->id,
-                        //     ]);
-                        // }
-
+                        // If there was an advance from previous bill, apply it here
+                        if ($advance !== null && $advance > 0) {
+                            $bills->update([
+                                'advance_payment' => $advance,
+                            ]);
+                        }
+                    
                         if ($amount > 0 && $record->bills()->orderBy('created_at', 'desc')->first()?->status === 'pending') {
                             Payment::create([
                                 'amount' => $amount + 40,
@@ -151,16 +202,16 @@ class BillerWaterConnectionResource extends Resource
                                 'water_connection_id' => $record->id,
                             ]);
                         }
-
+                    
                         $data = [
                             'reference_number' => $record->reference_id,
                             'amount' => $amount + 40,
                             'startEndDate' => BillerWaterConnectionResource::getLastMonthPeriod(now()),
                             'dueDate' => BillerWaterConnectionResource::getDiscountCutOffDate(now()),
                         ];
-
+                    
                         (new EmailService)->handle($record->users, $data, 'reading');
-
+                    
                         Notification::make()
                             ->title('Reading Connection')
                             ->body('Connection has been read successfully.')

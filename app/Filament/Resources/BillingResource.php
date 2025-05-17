@@ -88,18 +88,54 @@ class BillingResource extends Resource
 
         return $table
             ->columns([
-                TextColumn::make('created_at')->label('Date Created')->date('F d, Y h:i A')->timezone('Asia/Manila')->toggleable(),
-                Tables\Columns\TextColumn::make('waterConnection.reference_id')->weight(FontWeight::Bold)->label('Water Connection Ref. ID')->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('waterConnection.name')->label('Owner Name')->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('reading.total_consumption')->label('Water Consumption ')
-                    ->formatStateUsing(fn (string $state): string => $state.' m³')->toggleable(),
-                Tables\Columns\TextColumn::make('billing_amount')->money('PHP')->weight(FontWeight::Bold)->toggleable(),
-                Tables\Columns\TextColumn::make('partial_payment')->money('PHP')->weight(FontWeight::Bold)->toggleable(),
-                Tables\Columns\TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
+                TextColumn::make('created_at')
+                ->label('Reading Date')
+                ->date('F d, Y h:i A')
+                ->timezone('Asia/Manila')
+                ->toggleable(),
+                Tables\Columns\TextColumn::make('waterConnection.reference_id')
+                ->weight(FontWeight::Bold)
+                ->label('Water Connection Ref. ID')
+                ->searchable()
+                ->toggleable(),
+                Tables\Columns\TextColumn::make('waterConnection.name')
+                ->label('Owner Name')
+                ->searchable()
+                ->toggleable(),
+                Tables\Columns\TextColumn::make('reading.total_consumption')
+                ->label('Water Consumption ')
+                ->formatStateUsing(fn (string $state): string => $state.' m³')
+                ->toggleable(),
+                Tables\Columns\TextColumn::make('billing_amount')
+                ->money('PHP')
+                ->weight(FontWeight::Bold)
+                ->toggleable(),
+                // Tables\Columns\TextColumn::make('partial_payment')
+                // ->money('PHP')
+                // ->weight(FontWeight::Bold)
+                // ->toggleable(),
+                Tables\Columns\TextColumn::make('payment_amount')
+                ->money('PHP')
+                ->weight(FontWeight::Bold)
+                ->toggleable(),
+                Tables\Columns\TextColumn::make('is_discounted')
+                ->label('Discounted?')
+                ->weight(FontWeight::Bold)
+                // ->extraAttributes(['class' => 'italic'])
+                ->searchable()
+                ->toggleable()
+                ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
+                ->color(fn ($state) => $state ? 'success' : 'danger'),
+                Tables\Columns\TextColumn::make('status')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
                     'paid' => 'success',
                     'pending' => 'gray',
                     'partial' => 'warning',
-                })->formatStateUsing(fn (string $state): string => __(ucfirst($state)))->toggleable(),
+                    'unpaid' => 'danger',
+                })
+                ->formatStateUsing(fn (string $state): string => __(ucfirst($state)))
+                ->toggleable(),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -107,6 +143,7 @@ class BillingResource extends Resource
                         'paid' => 'Paid',
                         'pending' => 'Pending',
                         'partial' => 'Partial',
+                        'unpaid' => 'Unpaid',
                     ]),
                 SelectFilter::make('Water Connection')
                     ->relationship('waterConnection', 'name')
@@ -130,120 +167,177 @@ class BillingResource extends Resource
                     }),
             ])
             ->actions([
+
                 Action::make('Pay')
-                    ->label('Pay Full')
-                    ->icon('heroicon-o-banknotes')
-                    ->visible(auth()->user()->isAdmin())
-                    ->hidden(fn (Model $record): bool => $record->status === 'paid' || $record->status === 'partial')
-                    ->requiresConfirmation()
-                    ->action(function ($data, Model $record) {
+                ->label('Pay')
+                ->icon('heroicon-o-banknotes')
+                ->visible(auth()->user()->isAdmin())
+                // ->hidden(fn (Model $record): bool => $record->status === 'paid' || $record->status === 'partial')
+                ->hidden(fn (Model $record): bool => in_array($record->status, ['paid', 'partial', 'unpaid']))
 
-                        $bills = Bill::where('status', 'partial')->get();
-
-                        $total = BillingResource::getTotal($record);
-
-                        $payment = Payment::where('bill_id', $record->id)->first();
-                        // dd($payment, $total);
-                        foreach ($bills as $bill) {
-                            $bill->status = 'paid';
-                            $bill->save();
+                ->form(function (Model $record) {
+                    // Get all previous bills
+                    $previousBills = Bill::where('water_connection_id', $record->water_connection_id)
+                        ->where('id', '<', $record->id)
+                        ->get();
+                
+                    $totalPreviousBalance = 0;
+                    $totalAdvancePayment = 0;
+                
+                    foreach ($previousBills as $bill) {
+                        $totalPartialPayments = Payment::where('bill_id', $bill->id)->sum('partial_payment');
+                        $billBalance = $bill->billing_amount - $totalPartialPayments;
+                
+                        if (($bill->status === 'partial' || $bill->status === 'unpaid') && $billBalance > 0) {
+                            $totalPreviousBalance += $billBalance;
                         }
+                
+                        $totalAdvancePayment += $bill->advance_payment ?? 0;
+                    }
+                
+                    // Determine billing amount
+                    $billingAmount = BillingResource::getTotal($record);
+                
+                    // Adjusted amount to pay
+                    $adjustedBillingAmount = max(($totalPreviousBalance + $billingAmount) - $totalAdvancePayment, 0);
+                
+                    return [
+                        TextInput::make('billing_amount')
+                            ->label('Bill')
+                            ->default('PHP ' . number_format($billingAmount, 2))
+                            ->disabled(),
+                
+                        TextInput::make('advance_payment')
+                            ->label('Advance Payment')
+                            ->default('PHP ' . number_format($totalAdvancePayment, 2))
+                            ->disabled(),
+                
+                        TextInput::make('previous_balance')
+                            ->label('Previous Balance')
+                            ->default('PHP ' . number_format($totalPreviousBalance, 2))
+                            ->disabled(),
+                
+                        TextInput::make('amount_to_pay')
+                            ->label('Amount to Pay')
+                            ->default('PHP ' . number_format($adjustedBillingAmount, 2))
+                            ->disabled(),
+                
+                        TextInput::make('amount')
+                            ->label('Enter Payment Amount')
+                            ->numeric()
+                            ->required(),
+                    ];
+                })
+                
+                ->modalDescription(function (Model $record) {
+                    return "Please enter the payment amount. This will cover any previous balances and your current bill. Any extra payment will be credited as advance payment.";
+                })
+                ->requiresConfirmation()
+                ->action(function ($data, Model $record) {
+                    $paymentAmount = $data['amount'];
+                    $totalAvailable = $paymentAmount;
 
-                        if ($payment) {
-                            $payment->update([
-                                'partial_payment' => $total,
+                    // Step 0: Get all previous unpaid/partial bills
+                    $previousBills = Bill::where('water_connection_id', $record->water_connection_id)
+                        ->where('id', '<', $record->id)
+                        ->whereIn('status', ['unpaid', 'partial'])
+                        ->orderBy('id') // oldest first
+                        ->get();
+
+                    $previousBalance = 0;
+                    $previousAdvancePayment = 0;
+
+                    foreach ($previousBills as $previousBill) {
+                        $partialPaid = Payment::where('bill_id', $previousBill->id)->sum('partial_payment');
+                        $advance = $previousBill->advance_payment ?? 0;
+
+                        $due = $previousBill->billing_amount - $partialPaid - $advance;
+
+                        if ($totalAvailable >= $due) {
+                            $previousBill->update([
+                                'status' => 'paid',
+                                'advance_payment' => 0,
+                                'is_discounted' => BillingResource::isDiscounted(
+                                    $record->created_at,
+                                    now()->format('Y-m-d'),
+                                    $record->water_connection_id,
+                                    $record->id
+                                ),
                             ]);
+
+                            $totalAvailable -= $due;
                         } else {
-                            $record->payment()->create([
-                                'amount' => $record->billing_amount,
-                                'bill_id' => $record->id,
-                                'partial_payment' => $total,
-                                'water_connection_id' => $record->waterConnection->id,
+                            // Not enough to fully pay this bill, update partials only
+                            $previousBill->update([
+                                'advance_payment' => $advance,
                             ]);
+                            $previousBalance += $due;
+                            $previousAdvancePayment += $advance;
                         }
+                    }
 
+                    // Step 1: Billing amount
+                    $billingAmount = BillingResource::getTotal($record);
+
+                    // Step 2: Total due = previous balance + current bill - previous advance
+                    $totalDue = max(($previousBalance + $billingAmount) - $previousAdvancePayment, 0);
+
+                    // Step 3: Determine advance from overpayment
+                    $advance = max($totalAvailable - $totalDue, 0);
+
+                    // Step 4: Update current bill
+                    if ($totalAvailable >= $totalDue) {
                         $record->update([
                             'status' => 'paid',
-                            'is_discounted' => BillingResource::isDiscounted($record->created_at, now()->format('Y-m-d')),
+                            'advance_payment' => $advance,
+                            'payment_amount' => $paymentAmount,
+                            'is_discounted' => BillingResource::isDiscounted(
+                                $record->created_at,
+                                now()->format('Y-m-d'),
+                                $record->water_connection_id,
+                                $record->id
+                            ),
                         ]);
-
-                        $amount = [
-                            'amount' => $total,
-                        ];
-
-                        (new EmailService)->handle($record->waterConnection->users()->get(), $amount, 'paymentFull');
-
-                        Notification::make()
-                            ->title('Payment Successful')
-                            ->success()
-                            ->send();
-                    })
-                    ->modalDescription(function ($record) {
-
-                        $value = BillingResource::getTotal($record);
-
-                        return 'Total Amount to be paid: PHP '.$value;
-                    }),
-                Action::make('partial')
-                    ->label('Partial Payment')
-                    ->icon('heroicon-o-credit-card')
-                    ->visible(auth()->user()->isAdmin())
-                    ->hidden(fn (Model $record): bool => $record->status === 'paid' || $record->status === 'partial')
-                    ->requiresConfirmation()
-                    ->action(function ($data, Model $record) {
-
+                    } else {
                         $record->update([
                             'status' => 'partial',
-                            'partial_payment' => $data['amount'],
+                            'advance_payment' => 0,
+                            'payment_amount' => $paymentAmount,
+                            'partial_payment' => $paymentAmount,
                         ]);
+                    }
 
-                        $payment = Payment::where('bill_id', $record->id)->first();
+                    // Step 5: Save payment
+                    $payment = Payment::where('bill_id', $record->id)->first();
+                    if ($payment) {
+                        $payment->update([
+                            'partial_payment' => $paymentAmount,
+                            'amount' => $record->billing_amount,
+                            'bill_id' => $record->id,
+                            'water_connection_id' => $record->waterConnection->id,
+                        ]);
+                    } else {
+                        $record->payment()->create([
+                            'partial_payment' => $paymentAmount,
+                            'amount' => $record->billing_amount,
+                            'bill_id' => $record->id,
+                            'water_connection_id' => $record->waterConnection->id,
+                        ]);
+                    }
 
-                        if ($payment) {
-                            $payment->update([
-                                'partial_payment' => $data['amount'],
-                                'amount' => $record->billing_amount,
-                                'bill_id' => $record->id,
-                                'water_connection_id' => $record->waterConnection->id,
-                            ]);
-                        } else {
-                            $record->payment()->create([
-                                'partial_payment' => $data['amount'],
-                                'amount' => $record->billing_amount,
-                                'bill_id' => $record->id,
-                                'water_connection_id' => $record->waterConnection->id,
-                            ]);
-                        }
-                    })
-                    ->form([
-                        TextInput::make('amount')
-                            ->numeric(),
-                    ]),
-                // Action::make('generate')
-                //     ->icon('heroicon-o-archive-box-arrow-down')
-                //     ->label('Generate PDF')
-                //     ->modalCancelAction(false)
-                //     ->modalSubmitAction(false)
-                //     ->modalHeading('PDF')
-                //     ->modalContent(function ($record): View {
-                //         return view('filament.pages.display-bill', [
-                //             'file' => $record,
-                //         ]);
-                //     })
-                //     ->visible(function ($record) {
+                    // Step 6: Email notification
+                    $amount = ['amount' => $paymentAmount];
+                    (new EmailService)->handle($record->waterConnection->users()->get(), $amount, 'paymentFull');
 
-                //         if ($record->status === 'paid' || $record->status === 'partial') {
-                //             return true;
-                //         }
-
-                //         return false;
-                //     })
-                //     ->modalWidth('full'),
+                    Notification::make()
+                        ->title('Payment Successful')
+                        ->body("TotalDue: ₱{$totalDue}, TotalAvailable: ₱{$totalAvailable}, BillingAmount: ₱{$billingAmount}")
+                        ->success()
+                        ->send();
+                }),
+            
             ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
             ])->groups(auth()->user()->isAdmin() ? $groups : [])
             ->modifyQueryUsing(function (Builder $query) {
 
@@ -295,69 +389,49 @@ class BillingResource extends Resource
         ];
     }
 
-    // public static function isDiscounted($date, $dateNow)
-    // {
-    //     $carbonDate = Carbon::parse($date);
-    //     $carbonDateNow = Carbon::parse($dateNow);
-
-    //     // Need Update sa cutoff date: dapat start sa reading date then 18 days from that and if the 18th day is on weekends extend it to teh next monday
-
-    //     $firstDayOfMonth = $carbonDate->copy()->startOfMonth();
-
-    //     $readingdate = $carbonDate->copy()->$dateNow;
-
-    //     $cutOffDate = $firstDayOfMonth->addDays(14)->format('Y-m-d');
-    //     $cutOffDate2 = $readingdate->addDays(14)->format('Y-m-d');
-
-    //     return $carbonDateNow->lessThanOrEqualTo($cutOffDate);
-    // }
-
-    public static function isDiscounted($date, $dateNow)
-    {
-        $carbonDate = Carbon::parse($date);
-        $carbonDateNow = Carbon::parse($dateNow);
-    
-        $firstDayOfNextMonth = $carbonDate->copy()->addMonthNoOverflow()->startOfMonth();
-    
-        // Calculate cutoff date: 18 days from the first day of the next month
-        $cutOffDate = $firstDayOfNextMonth->addDays(17);
-    
-        // If the cutoff date falls on a weekend, move to the next Monday
-        if ($cutOffDate->isWeekend()) {
-            $cutOffDate->next(Carbon::MONDAY);
-        }
-        return $carbonDateNow->lessThanOrEqualTo($cutOffDate);
+public static function isDiscounted($date, $dateNow, $waterConnectionId, $currentBillId)
+{
+    if (!$currentBillId) {
+        return false;
     }
 
-    // public static function getTotal($record)
-    // {
-    //     $bills = Bill::where('status', 'partial')->get();
-    //     $partialValue = 0;
-    //     $isDiscount = BillingResource::isDiscounted($record->created_at, now()->format('Y-m-d'));
+    $carbonDate = Carbon::parse($date);
+    $carbonDateNow = Carbon::parse($dateNow);
 
-    //     $withoutcharges = $record->billing_amount - 40;
-    //     $discountwithoutcharges = $withoutcharges * 0.05;
-    //     $totaldiscountedprice = $record->billing_amount - $discountwithoutcharges;
+    $firstDayOfNextMonth = $carbonDate->copy()->addMonthNoOverflow()->startOfMonth();
 
-    //     foreach ($bills as $bill) {
-    //         $difference = $bill->billing_amount - $bill->partial_payment;
-    //         $partialValue += $difference;
-    //     }
+    // Cutoff date: 18 days from start of next month
+    $cutOffDate = $firstDayOfNextMonth->addDays(17);
 
-    //     return $isDiscount ? ($record->billing_amount - $discountwithoutcharges) + $partialValue : $partialValue + $record->billing_amount;
-    //     // return $isDiscount ? ($record->billing_amount * 0.95) + $partialValue : $partialValue + $record->billing_amount;
-    //     // return $isDiscount ? ($partialValue + $record->billing_amount) * 0.95 : $partialValue + $record->billing_amount;
-    // }
+    // Move cutoff date to Monday if it falls on a weekend
+    if ($cutOffDate->isWeekend()) {
+        $cutOffDate->next(Carbon::MONDAY);
+    }
+
+    $currentBill = Bill::find($currentBillId);
+    if (!$currentBill) {
+        return false;
+    }
+
+    // Check for older unpaid/partial bills based on date, not ID
+    $hasUnpaidOrPartialPreviousBills = Bill::where('water_connection_id', $waterConnectionId)
+        ->where('created_at', '<', $currentBill->created_at)
+        ->whereIn('status', ['unpaid', 'partial'])
+        ->exists();
+
+    return !$hasUnpaidOrPartialPreviousBills && $carbonDateNow->lessThanOrEqualTo($cutOffDate);
+}
+
 
     public static function getTotal($record)
 {
     // Fetch only the bill related to the given record
-    $bills = Bill::where('status', 'partial')
+    $bills = Bill::whereIn('status', ['partial', 'unpaid'])
         ->where('id', $record->id) // Only fetch the relevant bill
         ->get();
         
     $partialValue = 0;
-    $isDiscount = BillingResource::isDiscounted($record->created_at, now()->format('Y-m-d'));
+    $isDiscount = BillingResource::isDiscounted($record->created_at,now()->format('Y-m-d'),$record->water_connection_id,$record->id);
 
     $withoutcharges = max($record->billing_amount - 40, 0); // Ensure it does not go negative
     $discountwithoutcharges = $withoutcharges * 0.05;
