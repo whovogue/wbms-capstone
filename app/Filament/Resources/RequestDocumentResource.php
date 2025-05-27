@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\Toggle;
+use App\Models\Personnel;
 
 class RequestDocumentResource extends Resource
 {
@@ -354,19 +355,56 @@ class RequestDocumentResource extends Resource
                     ->columns(2)
                     ->visible(fn (callable $get) => ($get('type') === 'barangay_id')),
 
-                    Section::make('Authorized Personnel')->schema([
+                Section::make('Authorized Personnel')->schema([
 
-                    TextInput::make('custom_fields.auth_name')
+                    Select::make('temp_auth_personnel')
+                        ->label('Select Personnel')
+                        ->options(\App\Models\Personnel::all()->pluck('name', 'id'))
+                        ->searchable()
+                        ->live()
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            if ($state) {
+                                $personnel = \App\Models\Personnel::find($state);
+                                $set('auth_name_display', $personnel?->name ?? '');
+                                $set('auth_position_display', $personnel?->position ?? '');
+                            } else {
+                                $set('auth_name_display', '');
+                                $set('auth_position_display', '');
+                            }
+                        })
+                        ->afterStateHydrated(function (callable $set, callable $get) {
+                            $personnelId = $get('temp_auth_personnel');
+                            if ($personnelId) {
+                                $personnel = \App\Models\Personnel::find($personnelId);
+                                $set('auth_name_display', $personnel?->name ?? '');
+                                $set('auth_position_display', $personnel?->position ?? '');
+                            }
+                        })
+                        ->nullable()
+                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available'))
+                        ->required(fn (callable $get) => $get('is_punong_barangay_not_available')),
+
+                    TextInput::make('auth_name_display')
                         ->label('Authorized Name')
-                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available'))
-                        ->required(fn (callable $get) => $get('is_punong_barangay_not_available')),
-                    
-                    TextInput::make('custom_fields.auth_position')
-                        ->label('Authorized Position')
-                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available'))
-                        ->required(fn (callable $get) => $get('is_punong_barangay_not_available')),
+                        ->hidden()
+                        ->disabled()
+                        ->dehydrated(false) // Do NOT store this in the database
+                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available')),
 
-                    ])
+                    Select::make('auth_position_display')
+                        ->label('Authorized Position')
+                        ->disabled()
+                        ->dehydrated(false) // Do NOT store this in the database
+                        ->options([
+                            'captain' => 'Barangay Captain',
+                            'councilor' => 'Barangay Councilor',
+                            'SK Chairman' => 'SK Chairman',
+                            'IPMR' => 'IPMR',
+                        ])
+                        ->visible(fn (callable $get) => $get('is_punong_barangay_not_available')),
+
+
+                ])
                         ->columns(2)
                         ->visible(fn (callable $get) => $get('is_punong_barangay_not_available')),
             ])
@@ -384,13 +422,13 @@ class RequestDocumentResource extends Resource
                         ]),
                     Select::make('status')
                         ->required()
-                        ->visible(auth()->user()->isAdmin() || auth()->user()->isClerk())
                         ->default('pending')
                         ->options([
                             'pending' => 'Pending',
                             'approved' => 'Approved',
                             'rejected' => 'Rejected',
-                        ]),
+                        ])
+                        ->visible(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord && (auth()->user()->isAdmin() || auth()->user()->isClerk())),
                         Toggle::make('is_punong_barangay_not_available')
                         ->visible(fn (callable $get) => ($get('type') === 'barangay_clearance'))
                         ->label('Is Punong Barangay Not Available?')
@@ -398,11 +436,24 @@ class RequestDocumentResource extends Resource
                         ->offIcon('heroicon-m-x-circle')
                         ->reactive(),
                         Toggle::make('custom_fields.e_sign')
-                        ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
-                        ->label('Attach an E-Signature?')
-                        ->onIcon('heroicon-m-check-badge')
-                        ->offIcon('heroicon-m-x-circle')
-                        ->reactive(),
+                            ->visible(fn (callable $get) => ($get('type') === 'barangay_id'))
+                            ->label('Attach an E-Signature?')
+                            ->onIcon('heroicon-m-check-badge')
+                            ->offIcon('heroicon-m-x-circle')
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state) {
+                                    // Fetch the chairman's ID from the personnels table
+                                    $chairmanId = \App\Models\Personnel::where('position', 'chairman')->value('id');
+                                    
+                                    // Set it to the temp_auth_personnel column directly (not inside custom_fields)
+                                    $set('temp_auth_personnel', $chairmanId);
+                                } else {
+                                    // If unchecked, you may want to clear it
+                                    $set('temp_auth_personnel', null);
+                                }
+                            }),
+
                 ]),
             ]),
         ];
@@ -529,4 +580,6 @@ class RequestDocumentResource extends Resource
             'edit' => Pages\EditRequestDocument::route('/{record}/edit'),
         ];
     }
+
+    
 }

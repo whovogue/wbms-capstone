@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request; // For handling the image
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use App\Models\Personnel;
 
 class PDFController extends Controller
 {
@@ -40,29 +41,37 @@ class PDFController extends Controller
         return $pdf->stream('barangay_id.pdf');
     }
 
-    public function generateBarangayClearance(Request $request)
-    {
-        $data = [
-            'name' => $request->name,
-            'civil_status' => $request->civil_status,
-            'gender' => $request->gender,
-            'age' => $request->age,
-            'address' => $request->address,
-            // 'certificate_number' => $request->certificate_number,
-            'cert_no' => $request->cert_no,
-            'DPI' => $request->DPI,
-            'purpose' => $request->purpose,
-            'control_number' => $request->control_number,
-            'auth_name' => $request->auth_name,
-            'auth_position' => $request->auth_position,
-            'auth_script' => $request->is_punong_barangay_not_available ? 'By the authority of the Punong Barangay' : '',
-            'imagePath' => storage_path('app/images/clearance.png'),
-        ];
-
-        $pdf = \PDF::loadView('pdf.barangay_clearance', $data);
-
-        return $pdf->stream('barangay_clearance.pdf');
+public function generateBarangayClearance(Request $request)
+{
+    // Get the personnel based on the ID
+    $personnel = null;
+    if ($request->temp_auth_personnel) {
+        $personnel = Personnel::find($request->temp_auth_personnel);
     }
+
+    $data = [
+        'name' => $request->name,
+        'civil_status' => $request->civil_status,
+        'gender' => $request->gender,
+        'age' => $request->age,
+        'address' => $request->address,
+        // 'certificate_number' => $request->certificate_number,
+        'cert_no' => $request->cert_no,
+        'DPI' => $request->DPI,
+        'temp_auth_personnel' => $request->temp_auth_personnel,
+        'purpose' => $request->purpose,
+        'control_number' => $request->control_number,
+        // Use personnel data here
+        'auth_name' => $personnel?->name ?? '',
+        'auth_position' => $personnel?->position ?? '',
+        'auth_script' => $request->is_punong_barangay_not_available ? 'By the authority of the Punong Barangay' : '',
+        'imagePath' => storage_path('app/images/clearance.png'),
+    ];
+
+    $pdf = \PDF::loadView('pdf.barangay_clearance', $data);
+
+    return $pdf->stream('barangay_clearance.pdf');
+}
 
     public function viewDocument(RequestDocument $requestDocument)
     {
