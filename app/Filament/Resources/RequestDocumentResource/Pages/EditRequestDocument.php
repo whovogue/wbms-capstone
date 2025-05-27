@@ -82,19 +82,25 @@ class EditRequestDocument extends EditRecord
 
             $pdfContent = \PDF::loadView('pdf.barangay_id', $id_data);
         } else {
+            $personnel = null;
+
+            if (!empty($data['temp_auth_personnel'])) {
+                $personnel = \App\Models\Personnel::find($data['temp_auth_personnel']);
+            }
             $certificate_data = [
                 'name' => $data['custom_fields']['name'],
                 'civil_status' => $data['custom_fields']['civil_status'],
                 'gender' => ucfirst($data['custom_fields']['gender']),
-                // 'age' => ceil(Carbon::parse($data['custom_fields']['date_of_birth'])->diffInYears(Carbon::now())),
                 'age' => Carbon::parse($data['custom_fields']['date_of_birth'])->age,
                 'address' => $data['custom_fields']['address'],
-                // 'certificate_number' => $this->generateCertificateNumber(),
                 'cert_no' => $data['custom_fields']['cert_no'],
                 'DPI' => $data['custom_fields']['DPI'],
                 'purpose' => $data['custom_fields']['purpose'],
-                'auth_name' => $data['custom_fields']['auth_name'] ?? '',
-                'auth_position' => $data['custom_fields']['auth_position'] ?? '',
+
+                // Get name and position from Personnel (or fallback to empty string)
+                'auth_name' => $personnel?->name ?? '',
+                'auth_position' => $personnel?->position ?? '',
+
                 'auth_script' => !empty($data['is_punong_barangay_not_available']) ? 'By the authority of the Punong Barangay' : '',
                 'date_of_issue' => Carbon::now()->format('d-m-Y'),
                 'control_number' => $data['custom_fields']['control_number'] ?? '',
@@ -132,4 +138,5 @@ class EditRequestDocument extends EditRecord
         return $certificateNumber;
     }
     //Naa ra diay diri ang certificate number
+    
 }

@@ -16,6 +16,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
 class UserResource extends Resource
 {
@@ -74,7 +75,7 @@ class UserResource extends Resource
                         ->options([
                             'admin' => 'Admin',
                             'clerk' => 'Clerk',
-                            'consumers' => 'Consumers',
+                            'consumers' => 'Resident',
                             'reader' => 'Meter Reader',
                         ]),
                     DatePicker::make('date_of_birth')
@@ -134,6 +135,14 @@ class UserResource extends Resource
                         ->default('avatars/default_profile.png')
                         ->dehydrated(fn ($state) => $state ?: 'avatars/default_profile.png') // Ensure it's set if not provided
                         ->hidden(),
+                        // SignaturePad::make('signature')
+                        // ->label(__('Sign here'))
+                        // ->dotSize(2.0)
+                        // ->lineMinWidth(0.5)
+                        // ->lineMaxWidth(2.5)
+                        // ->throttle(16)
+                        // ->minDistance(5)
+                        // ->velocityFilterWeight(0.7)
                     
                 ])
                     ->columns(2),
@@ -146,13 +155,19 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('role')->badge()->color(fn (string $state): string => match ($state) {
+                Tables\Columns\TextColumn::make('role')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
                     'admin' => 'success',
                     'consumers' => 'gray',
                     'reader' => 'warning',
                     'clerk' => 'info',
-                })->formatStateUsing(fn (string $state): string => __(ucfirst($state))),
-                TextColumn::make('created_at')->label('Date Created')->date('F d, Y h:i A')->timezone('Asia/Manila'),
+                })
+                ->formatStateUsing(fn (string $state): string => match ($state) {
+                    'consumers' => 'Resident',
+                    default => __(ucfirst($state)),
+                }),
+
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('purok')

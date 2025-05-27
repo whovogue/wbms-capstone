@@ -118,14 +118,14 @@ class BillingResource extends Resource
                 ->money('PHP')
                 ->weight(FontWeight::Bold)
                 ->toggleable(),
-                Tables\Columns\TextColumn::make('is_discounted')
-                ->label('Discounted?')
-                ->weight(FontWeight::Bold)
-                // ->extraAttributes(['class' => 'italic'])
-                ->searchable()
-                ->toggleable()
-                ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
-                ->color(fn ($state) => $state ? 'success' : 'danger'),
+                // Tables\Columns\TextColumn::make('is_discounted')
+                // ->label('Discounted?')
+                // ->weight(FontWeight::Bold)
+                // // ->extraAttributes(['class' => 'italic'])
+                // ->searchable()
+                // ->toggleable()
+                // ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
+                // ->color(fn ($state) => $state ? 'success' : 'danger'),
                 Tables\Columns\TextColumn::make('status')
                 ->badge()
                 ->color(fn (string $state): string => match ($state) {
@@ -331,7 +331,7 @@ class BillingResource extends Resource
 
                     Notification::make()
                         ->title('Payment Successful')
-                        ->body("TotalDue: ₱{$totalDue}, TotalAvailable: ₱{$totalAvailable}, BillingAmount: ₱{$billingAmount}")
+                        ->body("Bill Amount: ₱{$billingAmount}")
                         ->success()
                         ->send();
                 }),
