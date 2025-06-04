@@ -396,8 +396,8 @@ class RequestDocumentResource extends Resource
                         ->disabled()
                         ->dehydrated(false) // Do NOT store this in the database
                         ->options([
-                            'captain' => 'Barangay Captain',
-                            'councilor' => 'Barangay Councilor',
+                            'Barangay Kapitan' => 'Barangay Kapitan',
+                            'Barangay Kagawad' => 'Barangay Kagawad',
                             'SK Chairman' => 'SK Chairman',
                             'IPMR' => 'IPMR',
                         ])

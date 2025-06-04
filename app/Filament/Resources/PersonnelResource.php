@@ -49,8 +49,8 @@ class PersonnelResource extends Resource
                 ->label('Position')
                 ->required()
                 ->options([
-                    'captain' => 'Barangay Captain',
-                    'councilor' => 'Barangay Councilor',
+                    'Barangay Kapitan' => 'Barangay Kapitan',
+                    'Barangay Kagawad' => 'Barangay Kagawad',
                     'SK Chairman' => 'SK Chairman',
                     'IPMR' => 'IPMR',
                 ]),
@@ -83,15 +83,15 @@ class PersonnelResource extends Resource
                     ->sortable()
                     ->badge() // Makes it a pill
                     ->color(fn (string $state): string => match ($state) {
-                        'captain' => 'success',
-                        'councilor' => 'info',
+                        'Barangay Kapitan' => 'success',
+                        'Barangay Kagawad' => 'info',
                         'SK Chairman' => 'warning',
                         'IPMR' => 'purple',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'captain' => 'Barangay Captain',
-                        'councilor' => 'Barangay Councilor',
+                        'Barangay Kapitan' => 'Barangay Kapitan',
+                        'Barangay Kagawad' => 'Barangay Kagawad',
                         'SK Chairman' => 'SK Chairman',
                         'IPMR' => 'IPMR',
                         default => ucfirst($state),
