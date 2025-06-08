@@ -49,7 +49,7 @@ class PersonnelResource extends Resource
                 ->label('Position')
                 ->required()
                 ->options([
-                    'Barangay Kapitan' => 'Barangay Kapitan',
+                    'Punong Barangay' => 'Punong Barangay',
                     'Barangay Kagawad' => 'Barangay Kagawad',
                     'SK Chairman' => 'SK Chairman',
                     'IPMR' => 'IPMR',
@@ -83,14 +83,14 @@ class PersonnelResource extends Resource
                     ->sortable()
                     ->badge() // Makes it a pill
                     ->color(fn (string $state): string => match ($state) {
-                        'Barangay Kapitan' => 'success',
+                        'Punong Barangay' => 'success',
                         'Barangay Kagawad' => 'info',
                         'SK Chairman' => 'warning',
                         'IPMR' => 'purple',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'Barangay Kapitan' => 'Barangay Kapitan',
+                        'Punong Barangay' => 'Punong Barangay',
                         'Barangay Kagawad' => 'Barangay Kagawad',
                         'SK Chairman' => 'SK Chairman',
                         'IPMR' => 'IPMR',
